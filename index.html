@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="Loopd"/>
+<meta name="theme-color" content="#8B5CC8"/>
+<meta name="description" content="Stay in the loop with your village — birthdays, events, group gifts and more."/>
+<meta property="og:title" content="Loopd"/>
+<meta property="og:description" content="Stay in the loop with your village"/>
+<meta property="og:type" content="website"/>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%238B5CC8'/%3E%3Ccircle cx='32' cy='50' r='16' fill='%23C9A8E8'/%3E%3Ccircle cx='68' cy='50' r='16' fill='%236B3FA0'/%3E%3C/svg%3E"/>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Fredoka+One&display=swap" rel="stylesheet"/>
+<title>Loopd — stay in the loop with your village</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FAF8FF;color:#1a1a1a;font-size:15px;overscroll-behavior:none;}
+.app{max-width:780px;margin:0 auto;padding:1rem;padding-bottom:calc(1rem + env(safe-area-inset-bottom));padding-top:calc(1rem + env(safe-area-inset-top));}
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #C9A8E8;}
+.logo-tag{font-size:12px;color:var(--color-text-secondary);margin-left:4px;}.user-chip{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:#F0E8FF;cursor:pointer;border:1px solid #C9A8E8;margin-left:auto;}
+.user-chip span{font-size:13px;font-weight:500;color:#3D1A6E;}
+.nav{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.nav-btn{padding:7px 16px;border-radius:999px;border:1.5px solid #e0e0e0;font-size:13px;font-weight:500;cursor:pointer;background:#fff;color:#666;transition:all 0.15s;}
+.nav-btn.active{background:#8B5CC8;color:white;border-color:#8B5CC8;}
+.nav-btn:hover:not(.active){border-color:#8B5CC8;color:#3D1A6E;}
+.card{background:#fff;border:1px solid #C9A8E8;border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
+.section-title{font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:1rem;}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:500;}
+.pill-red{background:#F0E8FF;color:#3D1A6E;}
+.pill-amber{background:#FAEEDA;color:#633806;}
+.pill-teal{background:#E1F5EE;color:#085041;}
+.pill-coral{background:#F5EEFF;color:#6B3FA0;}
+.pill-pink{background:#EDE0FF;color:#4A1A8C;}
+.pill-gray{background:#f5f5f5;color:#666;}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0;}
+.event-row{display:flex;align-items:start;gap:12px;padding:10px 0;border-bottom:1px solid #EDE0FF;}
+.event-row:last-child{border-bottom:none;}
+.days-col{width:48px;text-align:center;flex-shrink:0;}
+.days-num{font-size:22px;font-weight:600;line-height:1;}
+.days-lbl{font-size:10px;color:#999;}
+.event-info{flex:1;min-width:0;}
+.event-name{font-size:14px;font-weight:500;}
+.event-meta{font-size:12px;color:#666;margin-top:2px;}
+.tag-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.away-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;margin-bottom:6px;font-size:13px;}
+.away-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.friend-card{background:#fff;border:1px solid #C9A8E8;border-radius:12px;padding:1rem;margin-bottom:10px;}
+.friend-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.gift-progress{height:6px;background:#EDE0FF;border-radius:999px;overflow:hidden;margin:8px 0;}
+.gift-fill{height:6px;background:#8B5CC8;border-radius:999px;}
+.contrib-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #EDE0FF;}
+.contrib-row:last-child{border-bottom:none;}
+.check{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.check-yes{background:#E1F5EE;color:#085041;}
+.check-no{background:#f5f5f5;color:#bbb;}
+input,select,textarea{width:100%;padding:9px 12px;border:1px solid #C9A8E8;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#1a1a1a;outline:none;margin-top:4px;}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 2px #C9A8E8;border-color:#8B5CC8;}
+input[type=file]{border:none;padding:0;}
+label{font-size:12px;color:#666;display:block;margin-top:12px;}
+.btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit;transition:all 0.15s;}
+.btn-primary{background:#8B5CC8;color:white;}
+.btn-primary:hover{background:#3D1A6E;}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-outline{background:transparent;border:1px solid #ddd;color:#666;}
+.btn-outline:hover{border-color:#8B5CC8;color:#3D1A6E;}
+.empty{text-align:center;padding:2rem;color:#999;font-size:13px;}
+.thankyou-card{background:#F0E8FF;border-radius:10px;padding:1rem;margin-top:12px;}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center;padding:1rem;}
+.modal-bg.open{display:flex;}
+.modal{background:#fff;border-radius:16px;padding:1.5rem;width:100%;max-width:500px;border:1px solid #C9A8E8;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:15px;font-weight:600;margin-bottom:1rem;}
+.grid2{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
+.stat{background:#F0E8FF;border-radius:8px;padding:5px 12px;text-align:center;flex:1;min-width:60px;}
+.stat-num{font-size:16px;font-weight:600;color:#8B5CC8;}
+.stat-lbl{font-size:10px;color:#6B3FA0;}
+.req-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #EDE0FF;}
+.req-row:last-child{border-bottom:none;}
+.badge{background:#8B5CC8;color:white;border-radius:999px;padding:1px 7px;font-size:11px;margin-left:5px;}
+summary{cursor:pointer;font-size:13px;color:#999;padding:8px 0;user-select:none;}
+.bcard-section{background:#D8E8D8;border:1px solid #A8C4A8;border-radius:18px;padding:1.25rem;margin-top:14px;position:relative;}
+.bcard-title{font-family:'Caveat',cursive;font-size:17px;font-weight:700;color:#0E2010;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.bcard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;margin-bottom:12px;}
+.bcard-msg{background:#FDF5F0;border-radius:2px;padding:12px 12px 28px;transform:rotate(var(--rot,0deg));position:relative;box-shadow:3px 4px 10px rgba(0,0,0,0.16);}
+.bcard-msg::after{content:'';position:absolute;bottom:0;right:0;width:20px;height:20px;background:linear-gradient(225deg,transparent 50%,rgba(0,0,0,0.11) 50%);border-top-left-radius:3px;}
+.bcard-msg::before{content:'';position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:10px;height:10px;border-radius:50%;background:rgba(0,0,0,0.20);}
+.bcard-lines{position:absolute;inset:34px 8px 24px;background-repeating-linear-gradient(to bottom,transparent,transparent 22px,rgba(0,0,0,0.07) 22px,rgba(0,0,0,0.07) 23px);pointer-events:none;}
+.bcard-author{font-family:'Caveat',cursive;font-size:15px;font-weight:700;color:#5C2018;margin-bottom:8px;position:relative;}
+.bcard-text{font-family:'Caveat',cursive;font-size:15px;color:#3A1810;line-height:1.6;position:relative;}
+.bcard-img{width:100%;border-radius:4px;margin-top:8px;object-fit:cover;max-height:90px;position:relative;}
+.bcard-locked{background:rgba(255,255,255,0.5);border:1px dashed #A8C4A8;border-radius:10px;padding:1.25rem;text-align:center;color:#3A5838;font-size:13px;}
+.bcard-add-btn{width:100%;border:1.5px dashed #A8C4A8;color:#0E2010;background:rgba(255,255,255,0.5);border-radius:10px;padding:12px;font-size:15px;cursor:pointer;font-family:'Caveat',cursive;font-weight:700;transition:all 0.15s;}
+.bcard-add-btn:hover{background:rgba(255,255,255,0.8);}
+.bcard-footer{font-family:'Caveat',cursive;font-size:13px;color:#3A5838;text-align:center;padding-top:10px;border-top:1px dashed #A8C4A8;margin-top:4px;}
+.bcard-reveal-wrap{text-align:center;padding:0.5rem 0 1rem;}
+.bcard-reveal-wrap .big-emoji{font-size:36px;display:block;margin-bottom:6px;}
+@keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(60px) rotate(360deg);opacity:0;}}
+.confetti-dot{position:absolute;width:8px;height:8px;border-radius:50%;animation:confetti-fall 1.2s ease-in forwards;pointer-events:none;}
+.img-preview{width:100%;border-radius:8px;margin-top:8px;max-height:130px;object-fit:cover;display:none;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <svg width="175" height="44" viewBox="0 0 175 44">
+      <text x="0" y="38" font-family="'Fredoka One',cursive" font-size="36" fill="#3D1A6E">L</text>
+      <!-- face 1 — looking right -->
+      <circle cx="38" cy="25" r="13" fill="#8B5CC8"/>
+      <rect x="30" y="18" width="7" height="6" rx="2" fill="none" stroke="white" stroke-width="1.4"/>
+      <rect x="38" y="17" width="7" height="6" rx="2" fill="none" stroke="white" stroke-width="1.4"/>
+      <line x1="37" y1="21" x2="38" y2="21" stroke="white" stroke-width="1.4"/>
+      <circle cx="34" cy="21" r="1.2" fill="white"/>
+      <circle cx="35" cy="21" r="1.2" fill="#3D1A6E"/>
+      <circle cx="42" cy="20" r="1.2" fill="white"/>
+      <circle cx="43" cy="20" r="1.2" fill="#3D1A6E"/>
+      <path d="M32 28 Q38 34 44 29" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- face 2 — looking left -->
+      <circle cx="66" cy="25" r="13" fill="#C9A8E8"/>
+      <rect x="55" y="17" width="7" height="6" rx="2" fill="none" stroke="#3D1A6E" stroke-width="1.4"/>
+      <rect x="63" y="18" width="7" height="6" rx="2" fill="none" stroke="#3D1A6E" stroke-width="1.4"/>
+      <line x1="62" y1="21" x2="63" y2="21" stroke="#3D1A6E" stroke-width="1.4"/>
+      <circle cx="58" cy="20" r="1.2" fill="#3D1A6E"/>
+      <circle cx="59" cy="20" r="1.2" fill="white"/>
+      <circle cx="66" cy="21" r="1.2" fill="#3D1A6E"/>
+      <circle cx="67" cy="21" r="1.2" fill="white"/>
+      <path d="M58 29 Q64 34 70 28" stroke="#3D1A6E" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <text x="84" y="38" font-family="'Fredoka One',cursive" font-size="36" fill="#3D1A6E">pd</text>
+    </svg>
+    <div class="logo-tag">stay in the loop with your village</div>
+    <div class="user-chip" onclick="openModal('user-modal')">
+      <div class="avatar" style="width:24px;height:24px;font-size:11px;background:#F0E8FF;color:#3D1A6E;" id="top-av">IL</div>
+      <span id="top-name">Ilana</span>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn active" onclick="showTab('feed',this)">🗓️ Upcoming</button>
+    <button class="nav-btn" onclick="showTab('village',this)">🏘️ Village</button>
+    <button class="nav-btn" onclick="showTab('groups',this)">💬 Groups</button>
+    <button class="nav-btn" onclick="showTab('gifts',this)">🎁 Gifts</button>
+    <button class="nav-btn" onclick="showTab('add',this)">🎉 Add event</button>
+    <button class="nav-btn" onclick="showTab('requests',this)">👫 Build my village <span class="badge" id="req-badge" style="display:none;">0</span></button>
+  </div>
+  <div id="tab-feed"></div>
+  <div id="tab-village" style="display:none;"></div>
+  <div id="tab-groups" style="display:none;"></div>
+  <div id="tab-gifts" style="display:none;"></div>
+  <div id="tab-add" style="display:none;"></div>
+  <div id="tab-requests" style="display:none;"></div>
+</div>
+
+<div class="modal-bg" id="join-gift-modal">
+  <div class="modal">
+    <div id="join-gift-step1">
+      <div class="modal-title">🎁 Join the group gift</div>
+      <div id="jg-for" style="font-size:13px;color:#666;margin-bottom:16px;"></div>
+      <input type="hidden" id="jg-gi"/>
+      <label>Your contribution ($)</label>
+      <input type="number" id="jg-amount" placeholder="e.g. 20" min="1"/>
+      <div id="jg-suggestion" style="font-size:12px;color:#085041;background:#E1F5EE;padding:7px 11px;border-radius:8px;margin-top:8px;display:none;"></div>
+      <div id="jg-pay-row" style="margin-top:12px;">
+        <label>Pay via</label>
+        <select id="jg-pay"><option>PayID</option><option>PayPal</option><option>Bank transfer</option></select>
+        <div id="jg-pay-detail" style="font-size:12px;color:#999;margin-top:6px;padding:8px;background:#f9f9f9;border-radius:8px;"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button class="btn btn-primary" onclick="joinGiftStep2()">Next — add your card message →</button>
+        <button class="btn btn-outline" onclick="closeModal('join-gift-modal')">Cancel</button>
+      </div>
+    </div>
+    <div id="join-gift-step2" style="display:none;">
+      <div class="modal-title">✉️ Add your message to the card</div>
+      <div id="jg-card-for" style="font-size:13px;color:#666;margin-bottom:12px;"></div>
+      <textarea id="jg-msg" style="height:100px;" placeholder="Write something lovely for the birthday kid..."></textarea>
+      <label style="margin-top:12px;">Add a photo (optional)</label>
+      <input type="file" id="jg-photo" accept="image/*" onchange="previewJgImg(this)" style="border:none;padding:0;margin-top:4px;"/>
+      <img id="jg-preview" style="display:none;width:100%;border-radius:8px;margin-top:8px;max-height:130px;object-fit:cover;"/>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button class="btn btn-primary" onclick="confirmJoinGift()">Confirm — I'm in! 🎉</button>
+        <button class="btn btn-outline" onclick="backToStep1()">← Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="thankyou-modal">
+  <div class="modal">
+    <div class="modal-title">💛 Send a group thank you</div>
+    <input type="hidden" id="ty-gi"/>
+    <div id="ty-for" style="font-size:13px;color:#666;margin-bottom:12px;"></div>
+    <textarea id="ty-msg" style="height:90px;" placeholder="Write a thank you from your family to everyone who contributed..."></textarea>
+    <label style="margin-top:12px;">Add a photo (optional — show them the happy birthday kid!)</label>
+    <input type="file" id="ty-photo" accept="image/*" onchange="previewTyImg(this)" style="border:none;padding:0;margin-top:4px;"/>
+    <img id="ty-preview" style="display:none;width:100%;border-radius:8px;margin-top:8px;max-height:130px;object-fit:cover;"/>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn btn-primary" onclick="sendThankyou()">Send thank you 💛</button>
+      <button class="btn btn-outline" onclick="closeModal('thankyou-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVITE MODAL -->
+<div class="modal-bg" id="invite-modal">
+  <div class="modal">
+    <div class="modal-title">Invite others to Loopd 💜</div>
+    <div style="font-size:13px;color:#666;margin-bottom:14px;">Share your link — they sign up, create their profile, then send you a request. You choose their access level.</div>
+    <div style="background:#F0E8FF;border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600;color:#3D1A6E;word-break:break-all;margin-bottom:14px;" id="inv-link">loopd.app/join</div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:8px;" onclick="shareInviteLink()">💬 Share via iMessage / WhatsApp</button>
+    <button class="btn btn-outline" style="width:100%;margin-bottom:8px;" onclick="copyInviteLink()">📋 Copy link</button>
+    <div style="font-size:11px;color:#999;text-align:center;margin-bottom:12px;">Anyone who opens this link can request to join your village</div>
+    <button class="btn btn-outline" style="width:100%;" onclick="closeModal('invite-modal')">Done</button>
+  </div>
+</div>
+
+<!-- FIND SOMEONE MODAL -->
+<div class="modal-bg" id="find-modal">
+  <div class="modal">
+    <div class="modal-title">🔍 Find someone on Loopd</div>
+    <div style="font-size:13px;color:#666;margin-bottom:14px;">Enter their name exactly as they signed up. They'll get a request from you to connect.</div>
+    <label>Their name</label>
+    <input type="text" id="find-name" placeholder="e.g. Emma Davies"/>
+    <label style="margin-top:12px;">Their family name (optional)</label>
+    <input type="text" id="find-family" placeholder="e.g. Davies family"/>
+    <div style="background:#F0E8FF;border-radius:8px;padding:10px 12px;margin-top:12px;font-size:12px;color:#6B3FA0;line-height:1.6;">
+      💡 Not sure of the exact name? Ask them to share their personal invite link instead — that's the most reliable way to connect.
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn btn-primary" onclick="sendFindRequest()">Send request</button>
+      <button class="btn btn-outline" onclick="closeModal('find-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ONBOARDING MODAL — shown to new users -->
+<div class="modal-bg" id="user-modal">
+  <div class="modal">
+
+    <!-- Step 1: Name + family -->
+    <div id="ob-step1">
+      <div style="text-align:center;margin-bottom:1.25rem;">
+        <div style="font-family:'Fredoka One',cursive;font-size:26px;color:#3D1A6E;">Loopd</div>
+        <div style="font-size:13px;color:#6B3FA0;margin-top:2px;margin-bottom:12px;">stay in the loop with your village</div>
+        <div style="font-size:15px;font-weight:600;color:#1a1a1a;">Welcome! Let's set up your profile</div>
+      </div>
+      <label>Your name</label>
+      <input type="text" id="ob-name" placeholder="e.g. Ilana Goldman"/>
+      <label style="margin-top:12px;">Your family name</label>
+      <input type="text" id="ob-family" placeholder="e.g. Goldman family"/>
+      <button class="btn btn-primary" style="width:100%;margin-top:16px;" onclick="obStep2()">Next →</button>
+    </div>
+
+    <!-- Step 2: Kids -->
+    <div id="ob-step2" style="display:none;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <button onclick="obGoTo(1)" style="background:none;border:none;color:#8B5CC8;font-size:22px;cursor:pointer;line-height:1;">←</button>
+        <div>
+          <div style="font-size:15px;font-weight:600;color:#3D1A6E;">Your kids</div>
+          <div style="font-size:12px;color:#999;">So your village knows their birthdays</div>
+        </div>
+      </div>
+      <div id="ob-kids-list" style="margin-bottom:8px;"></div>
+      <div style="background:#F0E8FF;border-radius:10px;padding:12px;margin-bottom:10px;">
+        <input type="text" id="ob-kid-name" placeholder="Child's name" style="margin-bottom:8px;margin-top:0;"/>
+        <label>Date of birth</label>
+        <input type="date" id="ob-kid-dob"/>
+        <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;" onclick="obAddKid()">+ Add child</button>
+      </div>
+      <button class="btn btn-outline" style="width:100%;margin-bottom:8px;" onclick="obAddPregnancy()">🤰 Add a due date instead</button>
+      <button class="btn btn-primary" style="width:100%;" onclick="obStep3()">Next →</button>
+      <button class="btn btn-outline" style="width:100%;margin-top:6px;font-size:12px;" onclick="obStep3()">Skip — no kids yet</button>
+    </div>
+
+    <!-- Step 3: Done -->
+    <div id="ob-step3" style="display:none;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <button onclick="obGoTo(2)" style="background:none;border:none;color:#8B5CC8;font-size:22px;cursor:pointer;line-height:1;">←</button>
+        <div style="font-size:15px;font-weight:600;color:#3D1A6E;">You're all set!</div>
+      </div>
+      <div style="background:#F0E8FF;border-radius:12px;padding:1rem;margin-bottom:16px;">
+        <div style="font-size:13px;color:#3D1A6E;line-height:1.8;">
+          <div>👋 <span id="ob-confirm-name" style="font-weight:600;"></span></div>
+          <div>👨‍👩‍👧 <span id="ob-confirm-family" style="font-weight:600;"></span></div>
+          <div id="ob-confirm-kids" style="font-size:12px;color:#6B3FA0;margin-top:4px;"></div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:#666;margin-bottom:16px;">Now invite your village — send them a link and when they request to join, you'll choose their access level.</div>
+      <button class="btn btn-primary" style="width:100%;margin-bottom:8px;" onclick="obFinish()">Take me in 🎉</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ATTENDING MODAL -->
+<div class="modal-bg" id="attending-modal">
+  <div class="modal">
+    <div class="modal-title">Are you attending?</div>
+    <input type="hidden" id="att-eid"/>
+    <div id="att-event-info" style="font-size:13px;color:#666;margin-bottom:16px;padding:10px 12px;background:#F0E8FF;border-radius:8px;"></div>
+    <label>Adults coming</label>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+      <button class="btn btn-outline btn-sm" onclick="adjustAtt('adults',-1)" style="width:32px;padding:4px;">–</button>
+      <span id="att-adults-val" style="font-size:18px;font-weight:600;color:#3D1A6E;min-width:24px;text-align:center;">1</span>
+      <button class="btn btn-outline btn-sm" onclick="adjustAtt('adults',1)" style="width:32px;padding:4px;">+</button>
+    </div>
+    <label style="margin-top:14px;">Kids coming</label>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+      <button class="btn btn-outline btn-sm" onclick="adjustAtt('kids',-1)" style="width:32px;padding:4px;">–</button>
+      <span id="att-kids-val" style="font-size:18px;font-weight:600;color:#3D1A6E;min-width:24px;text-align:center;">0</span>
+      <button class="btn btn-outline btn-sm" onclick="adjustAtt('kids',1)" style="width:32px;padding:4px;">+</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:20px;">
+      <button class="btn btn-primary" onclick="saveAttending()">Confirm attending</button>
+      <button class="btn btn-outline" onclick="removeAttending()">Can't make it</button>
+      <button class="btn btn-outline" onclick="closeModal('attending-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE GROUP MODAL -->
+<div class="modal-bg" id="create-group-modal">
+  <div class="modal">
+    <div class="modal-title">Create a group</div>
+    <label>Group name</label>
+    <input type="text" id="cg-name" placeholder="e.g. Mothers Group, Park Crew, Fitzroy Mums"/>
+    <label style="margin-top:12px;">Add members from your village</label>
+    <div id="cg-members" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:40px;padding:8px;background:#F0E8FF;border-radius:8px;"></div>
+    <div style="font-size:11px;color:#999;margin-top:6px;">Tap names to add/remove — you're always included</div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn btn-primary" onclick="createGroup()">Create group</button>
+      <button class="btn btn-outline" onclick="closeModal('create-group-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- GROUP CHAT MODAL -->
+<div class="modal-bg" id="group-chat-modal">
+  <div class="modal" style="display:flex;flex-direction:column;height:82vh;max-height:580px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #EDE0FF;flex-shrink:0;">
+      <button onclick="closeModal('group-chat-modal')" style="background:none;border:none;color:#8B5CC8;font-size:22px;cursor:pointer;line-height:1;padding:0;">←</button>
+      <div style="flex:1;">
+        <div style="font-size:15px;font-weight:700;color:#3D1A6E;" id="gc-title"></div>
+        <div id="gc-members-label" style="font-size:11px;color:#999;margin-top:1px;"></div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="openOverlap(currentGroupId)">🗓️ Who's around?</button>
+    </div>
+    <div id="gc-messages" style="flex:1;overflow-y:auto;padding:4px 0;display:flex;flex-direction:column;gap:8px;"></div>
+    <div style="padding-top:10px;border-top:1px solid #EDE0FF;margin-top:8px;display:flex;gap:8px;flex-shrink:0;">
+      <input type="text" id="gc-input" placeholder="Message the group..." style="flex:1;margin-top:0;" onkeydown="if(event.key==='Enter')sendGroupMsg()"/>
+      <button class="btn btn-primary btn-sm" onclick="sendGroupMsg()">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- WHO'S AROUND MODAL -->
+<div class="modal-bg" id="overlap-modal">
+  <div class="modal">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <button onclick="closeModal('overlap-modal')" style="background:none;border:none;color:#8B5CC8;font-size:22px;cursor:pointer;line-height:1;padding:0;">←</button>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#3D1A6E;" id="ov-title">Who's potentially around?</div>
+        <div style="font-size:11px;color:#999;margin-top:1px;">Based on everyone's weekly rhythm · not a commitment</div>
+      </div>
+    </div>
+    <div id="ov-content"></div>
+  </div>
+</div>
+
+<!-- MY RHYTHM MODAL -->
+<div class="modal-bg" id="rhythm-modal">
+  <div class="modal">
+    <div class="modal-title">⏱️ My weekly rhythm</div>
+    <div style="font-size:12px;color:#666;margin-bottom:14px;line-height:1.6;">Helps your groups know when you're potentially around. Not a commitment — just your usual pattern.</div>
+    <label>Days I usually work</label>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;" id="rhy-work-days"></div>
+    <label style="margin-top:14px;">Days kids are in creche / childcare</label>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;" id="rhy-creche-days"></div>
+    <label style="margin-top:14px;display:flex;align-items:center;gap:8px;cursor:pointer;">
+      <input type="checkbox" id="rhy-has-nap" onchange="toggleNapFields()" style="width:16px;height:16px;margin:0;accent-color:#8B5CC8;"/>
+      <span>We have a nap time</span>
+    </label>
+    <div id="rhy-nap-fields" style="display:none;margin-top:12px;background:#F0E8FF;padding:12px;border-radius:10px;">
+      <div style="font-size:12px;color:#6B3FA0;margin-bottom:8px;">Nap window (approx)</div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div style="flex:1;"><label>From</label><input type="time" id="rhy-nap-start" value="12:00"/></div>
+        <div style="flex:1;"><label>Until</label><input type="time" id="rhy-nap-end" value="14:00"/></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:20px;">
+      <button class="btn btn-primary" onclick="saveRhythm()">Save</button>
+      <button class="btn btn-outline" onclick="closeModal('rhythm-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ABGS=['#F0E8FF','#FAEEDA','#E1F5EE','#EEEDFE','#FBEAF0','#E6F1FB'];
+const ATXS=['#3D1A6E','#633806','#085041','#3C3489','#72243E','#0C447C'];
+const TEMOJI={birthday:'🎂',trip:'✈️',event:'🎪',milestone:'⭐',playdate:'🛝',pregnancy:'🤰',other:'📌'};
+const TLABEL={birthday:'Birthday',trip:'Not around',event:'Event',milestone:'Milestone',playdate:'Playdate',pregnancy:'Baby on the way',other:'Other'};
+const TPILL={birthday:'pill-red',trip:'pill-amber',event:'pill-coral',milestone:'pill-pink',playdate:'pill-teal',pregnancy:'pill-pink',other:'pill-gray'};
+
+const DEFAULT_STATE={
+  me:'',pendingUser:'',
+  users:[],
+  requests:[],
+  friends:[],
+  events:[],
+  gifts:[],
+  groups:[],
+  rhythm:{workDays:[],crecheDays:[],napStart:'12:00',napEnd:'14:00',hasNap:false}
+};
+
+function loadState(){
+  try{
+    const saved=localStorage.getItem('loopd-state');
+    if(saved)return JSON.parse(saved);
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_STATE));
+}
+
+function saveState(){
+  try{localStorage.setItem('loopd-state',JSON.stringify(S));}catch(e){}
+}
+
+const S=loadState();
+
+function days(d){const t=new Date();t.setHours(0,0,0,0);const x=new Date(d);x.setHours(0,0,0,0);return Math.round((x-t)/86400000);}
+function fmt(d){return new Date(d).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});}
+function inits(n){return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function av(name,size,ci){const i=ci!==undefined?ci:([...name].reduce((a,c)=>a+c.charCodeAt(0),0)%6);return `<div class="avatar" style="width:${size}px;height:${size}px;background:${ABGS[i]};color:${ATXS[i]};font-size:${Math.round(size*0.33)}px;">${inits(name)}</div>`;}
+
+const CIRCLES={family:{label:'Family',bg:'#F0E8FF',color:'#3D1A6E'},friends:{label:'Friends',bg:'#E1F5EE',color:'#085041'},extended:{label:'Extended family',bg:'#EEEDFE',color:'#3C3489'}};
+function circlePill(c){const x=CIRCLES[c]||CIRCLES['friends'];return `<span class="pill" style="background:${x.bg};color:${x.color};">${x.label}</span>`;}
+
+const NOTE_ROTS=['-2.5deg','2deg','-1.8deg','2.5deg','-2deg','1.5deg','-1.5deg','2.2deg'];
+const VIS_LABEL={'family':'👨‍👩‍👧 Family','close-friends':'💜 Close friends','extended':'🌐 Extended','link':'🔗 Link','full':'All friends','loose':'General','unavailable':'Private'};
+
+function noteCards(msgs, showYours){
+  let m=`<div class="bcard-grid">`;
+  msgs.forEach((msg,mi)=>{
+    const rot=NOTE_ROTS[mi%NOTE_ROTS.length];
+    const isYours=msg.author===S.me;
+    m+=`<div class="bcard-msg" style="--rot:${rot};">
+      <div class="bcard-lines"></div>
+      <div class="bcard-author">${msg.author}</div>
+      <div class="bcard-text">${msg.text}</div>
+      ${msg.img?`<img src="${msg.img}" class="bcard-img"/>`:''}
+      ${isYours&&showYours?`<div style="font-family:'Caveat',cursive;font-size:12px;color:#A87060;margin-top:6px;position:relative;">your message ✏️</div>`:''}
+    </div>`;
+  });
+  m+=`</div>`;
+  return m;
+}
+
+function cardSection(g,gi){
+  const isOrg=g.organiser===S.me;
+  const msgs=g.card.messages;
+  const myMsg=msgs.find(m=>m.author===S.me);
+  const total=g.contributors.length;
+  const firstName=g.forChild.split(' ')[0];
+  let h=`<div class="bcard-section" id="bcard-${gi}">
+    <div class="bcard-title">✉️ Birthday card for ${firstName} <span style="font-size:12px;background:rgba(255,255,255,0.5);color:#0E2010;padding:2px 9px;border-radius:999px;margin-left:auto;font-family:inherit;">${msgs.length} / ${total}</span></div>`;
+
+  if(g.card.revealed){
+    h+=`<div style="text-align:center;margin-bottom:12px;"><div style="font-size:32px;">🎉</div><div style="font-family:'Caveat',cursive;font-size:16px;font-weight:700;color:#0E2010;margin-top:4px;">Card shared with ${firstName}'s family!</div></div>`;
+    h+=noteCards(msgs,false);
+    h+=`<div class="bcard-footer">wishing you a great year ahead 💛</div>`;
+  } else if(g.closed&&isOrg){
+    h+=`<div style="text-align:center;margin-bottom:12px;"><div style="font-size:28px;">🎁</div><div style="font-family:'Caveat',cursive;font-size:16px;font-weight:700;color:#0E2010;margin-top:4px;">Pool closed — ${msgs.length} messages ready!</div><div style="font-size:12px;color:#3A5838;margin-top:2px;">Preview below, share when ready</div></div>`;
+    h+=noteCards(msgs,false);
+    h+=`<div class="bcard-footer">wishing you a great year ahead 💛</div>`;
+    h+=`<button class="btn btn-primary" style="width:100%;margin-top:12px;font-size:15px;padding:12px;" onclick="revealCard(${gi})">🎉 Share card with ${firstName}'s family</button>`;
+  } else if(g.closed&&!isOrg){
+    h+=`<div class="bcard-locked">🔒 ${firstName}'s card is sealed — the organiser will share it soon!</div>`;
+  } else {
+    if(msgs.length>0) h+=noteCards(msgs,true);
+    else h+=`<div style="text-align:center;padding:1rem 0 0.5rem;font-size:26px;">🎈</div><div style="font-family:'Caveat',cursive;text-align:center;font-size:15px;color:#3A5838;margin-bottom:12px;">No messages yet — be the first to write!</div>`;
+    if(!myMsg){
+      h+=`<button class="bcard-add-btn" onclick="openCardModal(${gi})">✏️ Write your message for ${firstName}</button>`;
+    } else {
+      const rem=total-msgs.length;
+      h+=`<div style="font-family:'Caveat',cursive;font-size:14px;background:rgba(255,255,255,0.7);color:#0E2010;padding:8px 12px;border-radius:8px;margin-top:10px;text-align:center;">✓ Your message is in! ${rem>0?`Waiting for ${rem} more...`:'Everyone has written — card is complete 🎉'}</div>`;
+    }
+    h+=`<div style="font-family:'Caveat',cursive;font-size:12px;color:#3A5838;margin-top:8px;text-align:center;opacity:0.7;">Hidden from ${firstName}'s family until the pool closes.</div>`;
+  }
+  h+=`</div>`;
+  return h;
+}
+
+function revealCard(gi){
+  S.gifts[gi].card.revealed=true;
+  renderGifts();
+}
+
+function renderFeed(){
+  const sorted=[...S.events].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const up=sorted.filter(e=>days(e.date)>=-1&&e.type!=='trip');
+  const upBdays=up.filter(e=>e.type==='birthday');
+  const upPreg=up.filter(e=>e.type==='pregnancy');
+  const upEvents=up.filter(e=>e.type!=='birthday'&&e.type!=='pregnancy');
+  const past=sorted.filter(e=>days(e.date)<-1&&e.type!=='trip');
+  let h=`<div class="grid2">
+    <div class="stat"><div class="stat-num">${up.length}</div><div class="stat-lbl">upcoming</div></div>
+    <div class="stat"><div class="stat-num">${S.friends.length}</div><div class="stat-lbl">in your village</div></div>
+    <div class="stat"><div class="stat-num">${S.gifts.filter(g=>!g.closed).length}</div><div class="stat-lbl">gift pools open</div></div>
+    <div class="stat"><div class="stat-num">${S.requests.filter(r=>r.status==='pending').length}</div><div class="stat-lbl">pending requests</div></div>
+  </div>`;
+
+  function weeksAlong(dueDateStr){
+    const due=new Date(dueDateStr);due.setHours(0,0,0,0);
+    const today=new Date();today.setHours(0,0,0,0);
+    const daysLeft=Math.round((due-today)/86400000);
+    const totalDays=280;
+    const daysPregnant=totalDays-daysLeft;
+    return Math.max(1,Math.min(42,Math.round(daysPregnant/7)));
+  }
+
+  function eventRows(events){
+    let r='';
+    events.forEach(e=>{
+      const d=days(e.date);
+      const dc=d<=0?'#8B5CC8':d<=7?'#BA7517':'#999';
+      const myAttendance=e.attendees&&e.attendees.find(a=>a.name===S.me);
+      const totalAdults=(e.attendees||[]).reduce((s,a)=>s+(a.adults||0),0);
+      const totalKids=(e.attendees||[]).reduce((s,a)=>s+(a.kids||0),0);
+      const isTrip=e.type==='trip';
+      const isPreg=e.type==='pregnancy';
+      const nameDisplay=e.child?e.child:e.family;
+
+      if(isPreg){
+        const wks=weeksAlong(e.date);
+        const pct=Math.round(wks/40*100);
+        r+=`<div class="event-row">
+          <div class="days-col"><div class="days-num" style="color:#8B5CC8;">${d<0?'–':d}</div><div class="days-lbl">${d<0?'ago':'days'}</div></div>
+          <div style="width:38px;height:38px;border-radius:50%;background:#EDE0FF;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🤰</div>
+          <div class="event-info">
+            <div class="event-name">${e.family} <span style="font-weight:400;color:#999;">· baby on the way!</span></div>
+            <div class="event-meta">Due ${fmt(e.date)} ${e.note?'· '+e.note:''}</div>
+            <div style="margin-top:6px;">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:#6B3FA0;margin-bottom:3px;"><span>Week ${wks} of 40</span><span>${pct}%</span></div>
+              <div style="height:5px;background:#EDE0FF;border-radius:999px;overflow:hidden;"><div style="height:5px;background:#8B5CC8;border-radius:999px;width:${pct}%;"></div></div>
+            </div>
+            <div class="tag-row"><span class="pill pill-pink">Baby on the way</span>${e.visibility?`<span class="pill pill-gray" style="font-size:10px;">${VIS_LABEL[e.visibility]||''}</span>`:''}</div>
+          </div>
+        </div>`;
+        return;
+      }
+
+      r+=`<div class="event-row">
+        <div class="days-col"><div class="days-num" style="color:${dc};">${d<0?'–':d}</div><div class="days-lbl">${d<0?'ago':'days'}</div></div>
+        ${av(nameDisplay,38)}
+        <div class="event-info">
+          <div class="event-name">${TEMOJI[e.type]} ${nameDisplay} <span style="font-weight:400;color:#999;">· ${e.family}</span></div>
+          <div class="event-meta">${fmt(e.date)}${e.dateEnd?' – '+fmt(e.dateEnd):''} ${e.note?'· '+e.note:''}</div>
+          ${e.location?`<div style="font-size:12px;color:#8B5CC8;margin-top:3px;">📍 ${e.location}</div>`:''}
+          <div class="tag-row">
+            <span class="pill ${TPILL[e.type]}">${TLABEL[e.type]}</span>
+            ${e.visibility?`<span class="pill pill-gray" style="font-size:10px;">${VIS_LABEL[e.visibility]||''}</span>`:''}
+            ${totalAdults>0?`<span class="pill pill-gray" style="font-size:10px;">👤 ${totalAdults} adult${totalAdults!==1?'s':''} · 🧒 ${totalKids} kid${totalKids!==1?'s':''}</span>`:''}
+          </div>
+        </div>
+        ${!isTrip?`<button class="btn btn-sm ${myAttendance?'btn-primary':'btn-outline'}" style="${myAttendance?'':'border-color:#8B5CC8;color:#8B5CC8;'}" onclick="openAttending(${e.id})">${myAttendance?'✓ Going':'Attending?'}</button>`:''}
+      </div>`;
+    });
+    return r;
+  }
+
+  if(upBdays.length){
+    h+=`<div class="card"><div class="section-title">🎂 Birthdays coming up</div>${eventRows(upBdays)}</div>`;
+  }
+  if(upPreg.length){
+    h+=`<div class="card"><div class="section-title">🤰 Babies on the way</div>${eventRows(upPreg)}</div>`;
+  }
+  if(upEvents.length){
+    h+=`<div class="card"><div class="section-title">📌 Events & milestones</div>${eventRows(upEvents)}</div>`;
+  }
+  if(!upBdays.length&&!upEvents.length){
+    h+=`<div class="card"><div style="text-align:center;padding:1.5rem;color:#999;font-size:13px;">Nothing coming up — add some events!</div></div>`;
+  }
+
+  const awayFriends=S.friends.filter(f=>{
+    const ae=S.events.find(e=>e.type==='trip'&&e.author===f.name);
+    return ae&&((days(ae.date)<=0&&days(ae.dateEnd||ae.date)>=0)||(days(ae.date)>0&&days(ae.date)<=21));
+  });
+  if(awayFriends.length){
+    h+=`<div class="card"><div class="section-title">🏖️ Not around</div>`;
+    S.friends.forEach(f=>{
+      const ae=S.events.find(e=>e.type==='trip'&&e.author===f.name);
+      const isAway=ae&&days(ae.date)<=0&&days(ae.dateEnd||ae.date)>=0;
+      const soon=ae&&days(ae.date)>0&&days(ae.date)<=21;
+      if(!isAway&&!soon)return;
+      const dot=isAway?'#8B5CC8':'#BA7517';
+      const bg=isAway?'#F0E8FF':'#FAEEDA';
+      const lbl=isAway?'not around':`not around from ${fmt(ae.date)}`;
+      const detail=ae&&f.visibility==='full'&&ae.note?` · ${ae.note}`:'';
+      h+=`<div class="away-bar" style="background:${bg};"><div class="away-dot" style="background:${dot};"></div>${av(f.name,26,f.ci)}<span style="font-weight:500;">${f.name.split(' ')[0]}</span><span style="font-size:12px;color:#666;">${lbl}${detail}</span></div>`;
+    });
+    h+=`</div>`;
+  }
+
+  if(past.length){
+    h+=`<details><summary>Show ${past.length} past events</summary><div class="card" style="margin-top:8px;opacity:0.65;">`;
+    past.forEach(e=>{h+=`<div class="event-row"><div style="width:48px;font-size:11px;color:#999;">${fmt(e.date)}</div><div style="font-size:13px;color:#666;">${TEMOJI[e.type]} ${e.child} · ${e.family}</div></div>`;});
+    h+=`</div></details>`;
+  }
+  document.getElementById('tab-feed').innerHTML=h;
+}
+
+function renderVillage(){
+  let h=`<div class="card"><div class="section-title">Your village — ${S.friends.length} families</div>`;
+  S.friends.forEach(f=>{
+    const fe=S.events.filter(e=>e.author===f.name);
+    h+=`<div class="friend-card"><div class="friend-header">${av(f.name,44,f.ci)}<div><div style="font-size:15px;font-weight:600;">${f.name}</div><div style="font-size:12px;color:#999;margin-top:2px;">Kids: ${f.kids.map(k=>k.name).join(', ')||'not added yet'}</div><div style="margin-top:5px;display:flex;gap:5px;">${circlePill(f.circle||'friends')}<span class="pill ${f.visibility==='full'?'pill-teal':'pill-gray'}">${f.visibility==='full'?'Full access':'Limited view'}</span></div></div></div>`;
+    f.kids.forEach(k=>{
+      const dob=new Date(k.dob);const now=new Date();
+      let age=now.getFullYear()-dob.getFullYear();
+      if(now<new Date(now.getFullYear(),dob.getMonth(),dob.getDate()))age--;
+      const nb=new Date(now.getFullYear(),dob.getMonth(),dob.getDate());
+      if(nb<now)nb.setFullYear(now.getFullYear()+1);
+      h+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #EDE0FF;"><div style="font-size:13px;font-weight:500;flex:1;">${k.name}</div><span class="pill pill-gray">${age}y old</span><span class="pill pill-red">🎂 ${Math.round((nb-now)/86400000)}d</span></div>`;
+    });
+    if(fe.length){h+=`<div style="margin-top:8px;padding-top:8px;border-top:1px solid #EDE0FF;">`;fe.slice(0,3).forEach(e=>{h+=`<div style="font-size:12px;color:#666;padding:3px 0;">${TEMOJI[e.type]} ${e.child} · ${fmt(e.date)}</div>`;});h+=`</div>`;}
+    h+=`</div>`;
+  });
+  h+=`<button class="btn btn-outline" style="width:100%;margin-top:8px;" onclick="openModal('invite-modal')">+ Invite someone to your village</button></div>`;
+  document.getElementById('tab-village').innerHTML=h;
+}
+
+function renderGifts(){
+  // Find upcoming birthdays within next 30 days that have a gift pool
+  const upcomingBdays=S.events
+    .filter(e=>e.type==='birthday'&&days(e.date)>=0&&days(e.date)<=30)
+    .sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+  // Auto-create gift pools for upcoming birthdays that don't have one yet
+  upcomingBdays.forEach(e=>{
+    if(!S.gifts.find(g=>g.linkedEventId===e.id)){
+      S.gifts.push({
+        id:Date.now()+Math.random(),
+        forChild:e.child+' ('+e.family+')',
+        firstName:e.child,
+        idea:null,
+        linkedEventId:e.id,
+        organiser:null,
+        contributors:[],
+        closed:false,
+        thankYou:null,
+        thankYouImg:null,
+        card:{revealed:false,messages:[]}
+      });
+    }
+  });
+
+  let h='';
+
+  // Active gift pools — birthdays in next 30 days
+  const activePools=S.gifts.filter(g=>{
+    const le=S.events.find(e=>e.id===g.linkedEventId);
+    return le&&days(le.date)>=0&&days(le.date)<=30&&!g.closed;
+  });
+
+  // Closed pools needing thank you
+  const needsThanks=S.gifts.filter(g=>g.closed&&!g.thankYou);
+
+  // Completed pools
+  const completed=S.gifts.filter(g=>g.closed&&g.thankYou);
+
+  if(!activePools.length&&!needsThanks.length&&!completed.length){
+    h+=`<div class="card" style="text-align:center;padding:2rem;">
+      <div style="font-size:32px;margin-bottom:8px;">🎂</div>
+      <div style="font-size:15px;font-weight:500;color:#1a1a1a;margin-bottom:4px;">No upcoming birthdays this month</div>
+      <div style="font-size:13px;color:#999;">Group gifts will appear here automatically when a birthday is 30 days away.</div>
+    </div>`;
+  }
+
+  if(activePools.length){
+    h+=`<div style="font-size:12px;font-weight:600;color:#999;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px;">Upcoming group gifts</div>`;
+    activePools.forEach(g=>{
+      const le=S.events.find(e=>e.id===g.linkedEventId);
+      const d=le?days(le.date):null;
+      const myContrib=g.contributors.find(c=>c.name===S.me);
+      const myCardMsg=g.card.messages.find(m=>m.author===S.me);
+      const joinedGift=!!myContrib;
+      const joinedCard=!!myCardMsg;
+      const allDone=joinedGift&&joinedCard;
+      const contributorCount=g.contributors.length;
+
+      h+=`<div class="card" style="cursor:pointer;" onclick="openGiftPool(${g.id})">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:52px;height:52px;border-radius:50%;background:#F0E8FF;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎂</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:16px;font-weight:600;color:#1a1a1a;">${g.firstName}'s birthday</div>
+            <div style="font-size:13px;color:#666;margin-top:2px;">${le?fmt(le.date):''} · ${d===0?'today!':d===1?'tomorrow':`in ${d} days`}</div>
+            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+              ${allDone
+                ?`<span class="pill pill-teal">✓ You're in</span>`
+                :joinedGift&&!joinedCard
+                  ?`<span class="pill pill-amber">✏️ Add your card message</span>`
+                  :`<span class="pill pill-red">Join the group gift</span>`}
+              ${contributorCount>0?`<span class="pill pill-gray">${contributorCount} joining</span>`:''}
+            </div>
+          </div>
+          <div style="font-size:20px;color:#ddd;">›</div>
+        </div>
+      </div>`;
+    });
+  }
+
+  if(needsThanks.length){
+    h+=`<div style="font-size:12px;font-weight:600;color:#999;letter-spacing:0.05em;text-transform:uppercase;margin:16px 0 8px;">Send a thank you</div>`;
+    needsThanks.forEach(g=>{
+      const le=S.events.find(e=>e.id===g.linkedEventId);
+      const isBdayFamily=le&&le.author===S.me;
+      if(!isBdayFamily)return;
+      h+=`<div class="card" style="background:#FAF8FF;border-color:#C9A8E8;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:28px;">💛</div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;">${g.firstName}'s gift was delivered!</div>
+            <div style="font-size:13px;color:#666;margin-top:2px;">${g.contributors.length} people contributed. Time to send a thank you!</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openThankyou(${g.id});event.stopPropagation();">Send thanks</button>
+        </div>
+      </div>`;
+    });
+  }
+
+  if(completed.length){
+    h+=`<details style="margin-top:8px;"><summary style="font-size:13px;color:#999;cursor:pointer;padding:6px 0;">Show ${completed.length} completed gift${completed.length!==1?'s':''}</summary>`;
+    completed.forEach(g=>{
+      h+=`<div class="card" style="margin-top:8px;opacity:0.7;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:24px;">🎉</div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:600;">${g.firstName}'s birthday</div>
+            <div style="font-size:12px;color:#666;margin-top:2px;">"${g.thankYou}"</div>
+          </div>
+        </div>
+      </div>`;
+    });
+    h+=`</details>`;
+  }
+
+  document.getElementById('tab-gifts').innerHTML=h;
+}
+
+function openGiftPool(giftId){
+  const gi=S.gifts.findIndex(g=>g.id===giftId);
+  const g=S.gifts[gi];
+  const le=S.events.find(e=>e.id===g.linkedEventId);
+  const myContrib=g.contributors.find(c=>c.name===S.me);
+  const myCardMsg=g.card.messages.find(m=>m.author===S.me);
+
+  // If already joined gift but no card msg, jump to card step
+  if(myContrib&&!myCardMsg){
+    document.getElementById('jg-gi').value=gi;
+    document.getElementById('join-gift-step1').style.display='none';
+    document.getElementById('join-gift-step2').style.display='block';
+    document.getElementById('jg-card-for').innerHTML=`Write a message for <strong>${g.firstName}</strong>'s birthday card 🎂`;
+    document.getElementById('jg-msg').value='';
+    document.getElementById('jg-preview').style.display='none';
+    openModal('join-gift-modal');
+    return;
+  }
+
+  // If all done, show summary
+  if(myContrib&&myCardMsg){
+    const d=le?days(le.date):null;
+    const count=g.contributors.length;
+    // Show a read-only summary card — reuse the gift pool view as an inline detail
+    openGiftDetail(gi);
+    return;
+  }
+
+  // Fresh join
+  document.getElementById('jg-gi').value=gi;
+  document.getElementById('jg-for').innerHTML=`<strong>${g.firstName}'s birthday</strong> · ${le?fmt(le.date):''}`;
+  document.getElementById('jg-amount').value='';
+  document.getElementById('jg-preview').style.display='none';
+  document.getElementById('join-gift-step1').style.display='block';
+  document.getElementById('join-gift-step2').style.display='none';
+
+  // Suggestion based on avg of existing contributions
+  const amounts=g.contributors.filter(c=>c.amount>0).map(c=>c.amount);
+  const sugg=amounts.length>0?Math.round(amounts.reduce((a,b)=>a+b,0)/amounts.length):20;
+  const suggBox=document.getElementById('jg-suggestion');
+  if(amounts.length>0){
+    suggBox.style.display='block';
+    suggBox.textContent=`Others have been contributing around $${sugg} — but give whatever feels right!`;
+    document.getElementById('jg-amount').value=sugg;
+  } else {
+    suggBox.style.display='none';
+    document.getElementById('jg-amount').value=20;
+  }
+
+  // Pay detail
+  document.getElementById('jg-pay').onchange=updatePayDetail;
+  updatePayDetail();
+  openModal('join-gift-modal');
+}
+
+function updatePayDetail(){
+  const method=document.getElementById('jg-pay').value;
+  const details={
+    'PayID':'Send to: loopd@payments.au (once you confirm)',
+    'PayPal':'Send to: @loopdapp (once you confirm)',
+    'Bank transfer':'BSB: 123-456 · Acc: 987654 (once you confirm)'
+  };
+  document.getElementById('jg-pay-detail').textContent=details[method]||'';
+}
+
+function joinGiftStep2(){
+  const amount=parseFloat(document.getElementById('jg-amount').value);
+  if(!amount||amount<=0){alert('Please enter an amount.');return;}
+  document.getElementById('join-gift-step1').style.display='none';
+  document.getElementById('join-gift-step2').style.display='block';
+  const gi=parseInt(document.getElementById('jg-gi').value);
+  const g=S.gifts[gi];
+  document.getElementById('jg-card-for').innerHTML=`Write a message for <strong>${g.firstName}</strong>'s birthday card 🎂`;
+  document.getElementById('jg-msg').value='';
+  document.getElementById('jg-preview').style.display='none';
+}
+
+function backToStep1(){
+  document.getElementById('join-gift-step1').style.display='block';
+  document.getElementById('join-gift-step2').style.display='none';
+}
+
+function previewJgImg(input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{const img=document.getElementById('jg-preview');img.src=e.target.result;img.style.display='block';};
+  r.readAsDataURL(file);
+}
+
+function confirmJoinGift(){
+  const gi=parseInt(document.getElementById('jg-gi').value);
+  const g=S.gifts[gi];
+  const amount=parseFloat(document.getElementById('jg-amount').value)||20;
+  const msg=document.getElementById('jg-msg').value.trim();
+  if(!msg){alert('Please write a message for the card first!');return;}
+  const prev=document.getElementById('jg-preview');
+  const img=prev.style.display!=='none'?prev.src:null;
+
+  // Add contributor
+  if(!g.contributors.find(c=>c.name===S.me)){
+    g.contributors.push({name:S.me,paid:true,amount});
+  }
+  // Add card message
+  if(!g.card.messages.find(m=>m.author===S.me)){
+    g.card.messages.push({author:S.me,text:msg,img});
+  }
+
+  closeModal('join-gift-modal');
+  renderGifts();
+  // Show confirmation
+  setTimeout(()=>{
+    alert(`You're in! 🎉 Your contribution and message have been added to ${g.firstName}'s group gift.`);
+  },100);
+}
+
+function openGiftDetail(gi){
+  const g=S.gifts[gi];
+  const le=S.events.find(e=>e.id===g.linkedEventId);
+  const count=g.contributors.length;
+  const myMsg=g.card.messages.find(m=>m.author===S.me);
+  alert(`You're all set for ${g.firstName}'s birthday 🎉\n\n${count} people have joined the group gift.\nYour card message: "${myMsg?myMsg.text:'(none yet)'}"`);
+}
+
+function openThankyou(giftId){
+  const gi=S.gifts.findIndex(g=>g.id===giftId);
+  const g=S.gifts[gi];
+  document.getElementById('ty-gi').value=gi;
+  document.getElementById('ty-for').innerHTML=`Send a thank you from <strong>${g.firstName}</strong>'s family to everyone who joined the group gift.`;
+  document.getElementById('ty-msg').value='';
+  document.getElementById('ty-preview').style.display='none';
+  openModal('thankyou-modal');
+}
+
+function previewTyImg(input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{const img=document.getElementById('ty-preview');img.src=e.target.result;img.style.display='block';};
+  r.readAsDataURL(file);
+}
+
+function sendThankyou(){
+  const gi=parseInt(document.getElementById('ty-gi').value);
+  const msg=document.getElementById('ty-msg').value.trim();
+  if(!msg){alert('Please write a thank you message!');return;}
+  const prev=document.getElementById('ty-preview');
+  const img=prev.style.display!=='none'?prev.src:null;
+  S.gifts[gi].thankYou=msg;
+  S.gifts[gi].thankYouImg=img;
+  S.gifts[gi].closed=true;
+  closeModal('thankyou-modal');
+  renderGifts();
+}
+
+function closePool(gi){S.gifts[gi].closed=true;renderGifts();}
+function markPaid(gi,ci){S.gifts[gi].contributors[ci].paid=true;renderGifts();}
+function sendThanks(gi){const v=document.getElementById('ty-'+gi);if(v){const msg=v.value.trim();if(msg){S.gifts[gi].thankYou=msg;renderGifts();}}}
+
+function renderAdd(){
+  document.getElementById('tab-add').innerHTML=`<div class="card">
+    <div class="section-title">Add an event to your village</div>
+    <label>Your name</label><input type="text" id="a-author" value="${S.me}"/>
+    <label>Child's name (optional)</label><input type="text" id="a-child" placeholder="e.g. Lily — or leave blank for family events"/>
+    <label>Family name</label><input type="text" id="a-family" placeholder="e.g. Thompson family"/>
+    <label>Event type</label>
+    <select id="a-type">
+      <option value="birthday">🎂 Birthday</option>
+      <option value="pregnancy">🤰 Baby on the way</option>
+      <option value="trip">🏖️ Not around / away</option>
+      <option value="event">🎪 Event</option>
+      <option value="milestone">⭐ Milestone</option>
+      <option value="playdate">🛝 Playdate</option>
+      <option value="other">📌 Other</option>
+    </select>
+    <label>Date</label><input type="date" id="a-date"/>
+    <label>Location (optional)</label><input type="text" id="a-location" placeholder="e.g. 12 Rose St Fitzroy, or Zoom"/>
+    <label>Note (optional)</label><input type="text" id="a-note" placeholder="e.g. Turning 6! Loves dinosaurs."/>
+    <label>Who can see this?</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;" id="vis-grid">
+      <div onclick="setVis('family')" id="vis-family" class="vis-chip" style="padding:10px 12px;border-radius:10px;cursor:pointer;border:1.5px solid #ddd;background:#f9f9f9;transition:all 0.15s;">
+        <div style="font-size:13px;font-weight:600;color:#666;">👨‍👩‍👧 Family</div>
+        <div style="font-size:11px;color:#999;margin-top:2px;">Only your family</div>
+      </div>
+      <div onclick="setVis('close-friends')" id="vis-close-friends" class="vis-chip" style="padding:10px 12px;border-radius:10px;cursor:pointer;border:1.5px solid #ddd;background:#f9f9f9;transition:all 0.15s;">
+        <div style="font-size:13px;font-weight:600;color:#666;">💜 Close friends</div>
+        <div style="font-size:11px;color:#999;margin-top:2px;">Your inner circle</div>
+      </div>
+      <div onclick="setVis('extended')" id="vis-extended" class="vis-chip" style="padding:10px 12px;border-radius:10px;cursor:pointer;border:1.5px solid #8B5CC8;background:#F0E8FF;transition:all 0.15s;">
+        <div style="font-size:13px;font-weight:600;color:#3D1A6E;">🌐 Extended friends</div>
+        <div style="font-size:11px;color:#6B3FA0;margin-top:2px;">All connections</div>
+      </div>
+      <div onclick="setVis('link')" id="vis-link" class="vis-chip" style="padding:10px 12px;border-radius:10px;cursor:pointer;border:1.5px solid #ddd;background:#f9f9f9;transition:all 0.15s;">
+        <div style="font-size:13px;font-weight:600;color:#666;">🔗 Anyone with link</div>
+        <div style="font-size:11px;color:#999;margin-top:2px;">Share the link widely</div>
+      </div>
+    </div>
+    <input type="hidden" id="a-vis" value="extended"/>
+    <div style="margin-top:16px;"><button class="btn btn-primary" onclick="addEvent()">Save event</button></div>
+  </div>`;
+}
+
+function setVis(val){
+  document.getElementById('a-vis').value=val;
+  document.querySelectorAll('.vis-chip').forEach(el=>{
+    const isSelected=el.id==='vis-'+val;
+    el.style.border=isSelected?'1.5px solid #8B5CC8':'1.5px solid #ddd';
+    el.style.background=isSelected?'#F0E8FF':'#f9f9f9';
+    el.querySelector('div').style.color=isSelected?'#3D1A6E':'#666';
+  });
+}
+
+function renderRequests(){
+  const pending=S.requests.filter(r=>r.status==='pending');
+  const done=S.requests.filter(r=>r.status!=='pending');
+  let h='';
+
+  // ── SECTION 1: Join Requests ──────────────────────
+  h+=`<div class="card">
+    <div class="section-title">🔔 Join requests</div>`;
+  if(!pending.length){
+    h+=`<div class="empty" style="padding:1rem 0 0.5rem;">
+      <div style="font-size:12px;color:#999;">No pending requests right now.<br/>When someone joins via your link they'll appear here.</div>
+    </div>`;
+  }
+  pending.forEach(r=>{
+    if(!r.circle)r.circle='friends';
+    h+=`<div class="req-row" style="flex-direction:column;align-items:flex-start;gap:10px;padding:14px 0;">
+      <div style="display:flex;align-items:center;gap:10px;width:100%;">
+        ${av(r.from,44)}
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">${r.from}</div>
+          <div style="font-size:12px;color:#666;margin-top:1px;">wants to join your village</div>
+        </div>
+      </div>
+      <div style="width:100%;">
+        <div style="font-size:12px;font-weight:600;color:#3D1A6E;margin-bottom:6px;">Choose their access level:</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+          ${Object.entries(CIRCLES).map(([k,v])=>`
+            <div onclick="setReqCircle(${r.id},'${k}')" id="rc-${r.id}-${k}"
+              style="padding:5px 12px;border-radius:999px;font-size:12px;cursor:pointer;font-weight:500;
+              border:1.5px solid ${r.circle===k?v.color:'#ddd'};
+              background:${r.circle===k?v.bg:'#f5f5f5'};
+              color:${r.circle===k?v.color:'#999'};">
+              ${k==='family'?'👨‍👩‍👧':k==='friends'?'💜':'🌐'} ${v.label}
+            </div>`).join('')}
+        </div>
+        <div style="font-size:11px;color:#6B3FA0;margin-bottom:10px;padding:6px 10px;background:#F0E8FF;border-radius:8px;">
+          ${r.circle==='family'?'👨‍👩‍👧 Sees family-only events and above':r.circle==='friends'?'💜 Sees close friends events and above':'🌐 Sees extended events only'}
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" onclick="handleReq(${r.id},'accept')">Accept</button>
+          <button class="btn btn-outline btn-sm" onclick="handleReq(${r.id},'decline')">Decline</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  if(done.length){
+    h+=`<details style="margin-top:8px;"><summary>Previously handled (${done.length})</summary>`;
+    done.forEach(r=>{h+=`<div style="font-size:12px;color:#999;padding:3px 0;">${r.from} — ${r.status}</div>`;});
+    h+=`</details>`;
+  }
+  h+=`</div>`;
+
+  // ── SECTION 2: Find My Village ──────────────────────
+  h+=`<div class="card">
+    <div class="section-title">🔍 Find my village</div>
+    <div style="font-size:13px;color:#666;margin-bottom:14px;line-height:1.6;">
+      Know someone already on Loopd? Search for them by name and send a request to connect.
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="quick-find" placeholder="Search by name e.g. Emma Davies" style="flex:1;margin-top:0;"/>
+      <button class="btn btn-primary btn-sm" style="white-space:nowrap;" onclick="quickFind()">Find →</button>
+    </div>
+    <div id="find-result" style="margin-top:10px;"></div>
+    <div style="font-size:11px;color:#999;margin-top:10px;line-height:1.6;">
+      💡 The easiest way to connect is to ask them to share their personal invite link with you directly.
+    </div>
+  </div>`;
+
+  // ── SECTION 3: Invite Others ──────────────────────
+  h+=`<div class="card" style="text-align:center;">
+    <div style="font-size:22px;margin-bottom:8px;">💜</div>
+    <div style="font-size:15px;font-weight:600;color:#3D1A6E;margin-bottom:6px;">Invite others to join</div>
+    <div style="font-size:13px;color:#666;margin-bottom:16px;line-height:1.6;">
+      Share your Loopd link — they sign up, create their profile, and send you a request to connect. You then choose their access level.
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:8px;" onclick="shareInviteLink()">💬 Share via iMessage / WhatsApp</button>
+    <button class="btn btn-outline" style="width:100%;" onclick="openModal('invite-modal')">📋 Copy / see your link</button>
+  </div>`;
+
+  document.getElementById('tab-requests').innerHTML=h;
+}
+
+function quickFind(){
+  const query=(document.getElementById('quick-find').value||'').trim().toLowerCase();
+  const result=document.getElementById('find-result');
+  if(!query){result.innerHTML='';return;}
+  // check if already a friend
+  const alreadyFriend=S.friends.find(f=>f.name.toLowerCase().includes(query));
+  // check if already requested
+  const alreadyReq=S.requests.find(r=>r.from.toLowerCase().includes(query));
+  // check if it's yourself
+  if(S.me.toLowerCase().includes(query)){
+    result.innerHTML=`<div style="font-size:13px;color:#6B3FA0;padding:8px 0;">That's you! 😄</div>`;
+    return;
+  }
+  if(alreadyFriend){
+    result.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:10px;background:#E1F5EE;border-radius:10px;">
+      ${av(alreadyFriend.name,38)}
+      <div><div style="font-size:13px;font-weight:600;">${alreadyFriend.name}</div>
+      <div style="font-size:11px;color:#085041;">✓ Already in your village</div></div>
+    </div>`;
+    return;
+  }
+  if(alreadyReq){
+    result.innerHTML=`<div style="font-size:13px;color:#6B3FA0;padding:8px 0;">You already have a pending request with ${alreadyReq.from}.</div>`;
+    return;
+  }
+  // simulate finding them — in a real app this would search a database
+  result.innerHTML=`<div style="background:#F0E8FF;border-radius:10px;padding:12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      ${av(query,40)}
+      <div>
+        <div style="font-size:13px;font-weight:600;text-transform:capitalize;">${query}</div>
+        <div style="font-size:11px;color:#6B3FA0;">on Loopd</div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-sm" style="width:100%;" onclick="sendFindRequest('${query.replace(/'/g,"\\'")}')">Send request to connect</button>
+  </div>`;
+}
+
+function sendFindRequest(name){
+  const display=name.charAt(0).toUpperCase()+name.slice(1);
+  S.requests.push({id:Date.now(),from:display,status:'pending',circle:'friends',outgoing:true});
+  saveState();
+  document.getElementById('find-result').innerHTML=`<div style="font-size:13px;color:#085041;background:#E1F5EE;padding:10px;border-radius:8px;">✓ Request sent to ${display}! When they accept, they'll appear in your village.</div>`;
+  document.getElementById('quick-find').value='';
+  renderRequests();
+}
+
+function setReqCircle(id,circle){
+  const r=S.requests.find(x=>x.id===id);
+  if(r){r.circle=circle;}
+  // update chip UI
+  Object.keys(CIRCLES).forEach(k=>{
+    const el=document.getElementById(`rc-${id}-${k}`);
+    if(!el)return;
+    const v=CIRCLES[k];
+    el.style.border=`1.5px solid ${k===circle?v.color:'#ddd'}`;
+    el.style.background=k===circle?v.bg:'#f5f5f5';
+    el.style.color=k===circle?v.color:'#999';
+  });
+}
+
+function handleReq(id,action){
+  const r=S.requests.find(x=>x.id===id);
+  if(r){
+    r.status=action==='accept'?'accepted':'declined';
+    if(action==='accept'){
+      if(!r.circle)r.circle='friends';
+      S.friends.push({name:r.from,kids:[],visibility:'limited',circle:r.circle,ci:S.friends.length%6});
+    }
+  }
+  const rem=S.requests.filter(x=>x.status==='pending').length;
+  const b=document.getElementById('req-badge');b.textContent=rem;if(rem===0)b.style.display='none';else b.style.display='';
+  saveState();
+  renderRequests();if(action==='accept')renderVillage();
+}
+
+function addEvent(){
+  const child=document.getElementById('a-child').value.trim();
+  const family=document.getElementById('a-family').value.trim();
+  const date=document.getElementById('a-date').value;
+  if(!family||!date){alert('Please fill in family name and date.');return;}
+  S.events.push({
+    id:Date.now(),
+    author:document.getElementById('a-author').value.trim()||S.me,
+    child,family,
+    type:document.getElementById('a-type').value,
+    date,
+    location:document.getElementById('a-location').value.trim(),
+    note:document.getElementById('a-note').value.trim(),
+    visibility:document.getElementById('a-vis').value,
+    attendees:[]
+  });
+  saveState();
+  showTab('feed',document.querySelector('.nav-btn'));
+}
+
+let attAdults=1,attKids=0;
+
+function openAttending(eventId){
+  const e=S.events.find(x=>x.id===eventId);
+  if(!e)return;
+  const my=e.attendees&&e.attendees.find(a=>a.name===S.me);
+  attAdults=my?my.adults:1;
+  attKids=my?my.kids:0;
+  document.getElementById('att-eid').value=eventId;
+  document.getElementById('att-adults-val').textContent=attAdults;
+  document.getElementById('att-kids-val').textContent=attKids;
+  document.getElementById('att-event-info').innerHTML=`<strong>${TEMOJI[e.type]} ${e.child}'s ${TLABEL[e.type]}</strong><br/>${fmt(e.date)}${e.location?' · 📍 '+e.location:''}`;
+  openModal('attending-modal');
+}
+
+function adjustAtt(field,delta){
+  if(field==='adults'){attAdults=Math.max(0,attAdults+delta);document.getElementById('att-adults-val').textContent=attAdults;}
+  else{attKids=Math.max(0,attKids+delta);document.getElementById('att-kids-val').textContent=attKids;}
+}
+
+function saveAttending(){
+  const eid=parseInt(document.getElementById('att-eid').value);
+  const e=S.events.find(x=>x.id===eid);
+  if(!e)return;
+  if(!e.attendees)e.attendees=[];
+  const idx=e.attendees.findIndex(a=>a.name===S.me);
+  if(idx>=0)e.attendees[idx]={name:S.me,adults:attAdults,kids:attKids};
+  else e.attendees.push({name:S.me,adults:attAdults,kids:attKids});
+  closeModal('attending-modal');
+  saveState();
+  renderFeed();
+}
+
+function removeAttending(){
+  const eid=parseInt(document.getElementById('att-eid').value);
+  const e=S.events.find(x=>x.id===eid);
+  if(e&&e.attendees)e.attendees=e.attendees.filter(a=>a.name!==S.me);
+  closeModal('attending-modal');
+  saveState();
+  renderFeed();
+}
+
+// ── INVITE ──────────────────────────────────────────
+function copyInviteLink(){
+  const link=window.location.href;
+  if(navigator.clipboard){navigator.clipboard.writeText(link);}
+  else{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);}
+  document.getElementById('inv-link').textContent='✓ Copied!';
+  setTimeout(()=>{document.getElementById('inv-link').textContent=window.location.href;},2000);
+}
+
+function shareInviteLink(){
+  const link=window.location.href;
+  const txt=`Hey! I'm using Loopd to stay connected with my village — join me here: ${link}`;
+  if(navigator.share){navigator.share({title:'Join my village on Loopd',text:txt,url:link}).catch(()=>{});}
+  else{copyInviteLink();}
+}
+
+// ── ONBOARDING ──────────────────────────────────────
+let obKids=[];
+
+function obGoTo(step){
+  [1,2,3].forEach(s=>document.getElementById('ob-step'+s).style.display=s===step?'block':'none');
+}
+
+function obStep2(){
+  const name=document.getElementById('ob-name').value.trim();
+  const family=document.getElementById('ob-family').value.trim();
+  if(!name){alert('Please enter your name.');return;}
+  obGoTo(2);
+  renderObKids();
+}
+
+function obStep3(){
+  obGoTo(3);
+  const name=document.getElementById('ob-name').value.trim();
+  const family=document.getElementById('ob-family').value.trim()||name.split(' ').slice(-1)[0]+' family';
+  document.getElementById('ob-confirm-name').textContent=name;
+  document.getElementById('ob-confirm-family').textContent=family;
+  const kl=document.getElementById('ob-confirm-kids');
+  kl.textContent=obKids.length?obKids.map(k=>`🎂 ${k.name}`).join('  '):'No kids added yet';
+}
+
+function obAddKid(){
+  const n=document.getElementById('ob-kid-name').value.trim();
+  const d=document.getElementById('ob-kid-dob').value;
+  if(!n){alert('Please enter a name.');return;}
+  obKids.push({name:n,dob:d||''});
+  document.getElementById('ob-kid-name').value='';
+  document.getElementById('ob-kid-dob').value='';
+  renderObKids();
+}
+
+function obAddPregnancy(){
+  const due=prompt('Enter the due date (YYYY-MM-DD):');
+  if(!due)return;
+  const family=document.getElementById('ob-family').value.trim()||'My family';
+  S.events.push({id:Date.now(),author:document.getElementById('ob-name').value.trim(),child:'',family,type:'pregnancy',date:due,note:'',location:'',visibility:'close-friends',attendees:[]});
+  alert('Due date added! It will show in your Upcoming tab.');
+}
+
+function renderObKids(){
+  const list=document.getElementById('ob-kids-list');
+  list.innerHTML=obKids.map((k,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#F0E8FF;border-radius:8px;margin-bottom:6px;">
+      <div style="flex:1;font-size:13px;font-weight:500;color:#3D1A6E;">${k.name}${k.dob?' · '+fmt(k.dob):''}</div>
+      <button onclick="obRemoveKid(${i})" style="background:none;border:none;color:#999;cursor:pointer;font-size:16px;">×</button>
+    </div>`).join('');
+}
+
+function obRemoveKid(i){obKids.splice(i,1);renderObKids();}
+
+function obFinish(){
+  const name=document.getElementById('ob-name').value.trim();
+  const family=document.getElementById('ob-family').value.trim()||name.split(' ').slice(-1)[0]+' family';
+  if(!name)return;
+  S.me=name;
+  S.pendingUser=name;
+  if(!S.users.includes(name))S.users.push(name);
+  // add kids as birthday events
+  obKids.forEach(k=>{
+    if(k.dob){
+      const now=new Date();
+      const dob=new Date(k.dob);
+      const next=new Date(dob);
+      next.setFullYear(now.getFullYear());
+      if(next<now)next.setFullYear(now.getFullYear()+1);
+      const dateStr=next.toISOString().split('T')[0];
+      S.events.push({id:Date.now()+Math.random(),author:name,child:k.name,family,type:'birthday',date:dateStr,note:'',location:'',visibility:'close-friends',attendees:[]});
+    }
+  });
+  // add as a friend entry for yourself
+  S.friends.push({name,kids:obKids.map(k=>({name:k.name,dob:k.dob})),visibility:'full',circle:'friends',ci:0,isMe:true});
+  saveState();
+  document.getElementById('top-name').textContent=name;
+  document.getElementById('top-av').textContent=inits(name);
+  closeModal('user-modal');
+  renderFeed();
+  renderVillage();
+  // show invite prompt after a moment
+  setTimeout(()=>{
+    if(confirm('Profile saved! 🎉\n\nWant to invite your village now?')){openModal('invite-modal');}
+  },400);
+}
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function renderUserChips(){}
+function setPending(){}
+function addNewUser(){}
+function confirmUser(){}
+
+['join-gift-modal','thankyou-modal','invite-modal','find-modal','attending-modal','user-modal','create-group-modal','group-chat-modal','overlap-modal','rhythm-modal'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('click',function(e){if(e.target===this)closeModal(id);});
+});
+
+function showTab(tab,btn){
+  ['feed','village','groups','gifts','add','requests'].forEach(t=>{document.getElementById('tab-'+t).style.display=t===tab?'block':'none';});
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(tab==='feed')renderFeed();
+  else if(tab==='village')renderVillage();
+  else if(tab==='groups')renderGroups();
+  else if(tab==='gifts')renderGifts();
+  else if(tab==='add')renderAdd();
+  else if(tab==='requests')renderRequests();
+}
+
+// ── GROUPS ────────────────────────────────────────────
+
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DAYS_FULL=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+let currentGroupId=null;
+let cgSelected=[];
+
+function renderGroups(){
+  if(!S.groups)S.groups=[];
+  let h='';
+
+  // My rhythm card
+  const r=S.rhythm||{};
+  const hasRhythm=(r.workDays&&r.workDays.length)||(r.crecheDays&&r.crecheDays.length)||r.hasNap;
+  h+=`<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${hasRhythm?'10px':'0'};">
+      <div class="section-title" style="margin-bottom:0;">⏱️ My rhythm</div>
+      <button class="btn btn-outline btn-sm" onclick="openRhythmModal()">Edit</button>
+    </div>`;
+  if(!hasRhythm){
+    h+=`<div style="font-size:13px;color:#999;padding:8px 0;">Set your weekly rhythm so your groups can see when you're potentially around.</div>
+    <button class="btn btn-primary" style="margin-top:8px;" onclick="openRhythmModal()">Set my rhythm →</button>`;
+  } else {
+    if(r.workDays&&r.workDays.length)h+=`<div style="font-size:12px;color:#666;margin-bottom:4px;">💼 Works: ${r.workDays.join(', ')}</div>`;
+    if(r.crecheDays&&r.crecheDays.length)h+=`<div style="font-size:12px;color:#666;margin-bottom:4px;">🏫 Creche: ${r.crecheDays.join(', ')}</div>`;
+    if(r.hasNap)h+=`<div style="font-size:12px;color:#666;margin-bottom:4px;">😴 Nap: ${r.napStart||'12:00'} – ${r.napEnd||'14:00'}</div>`;
+  }
+  h+=`</div>`;
+
+  // Groups list
+  h+=`<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="section-title" style="margin-bottom:0;">💬 My groups</div>
+      <button class="btn btn-primary btn-sm" onclick="openCreateGroup()">+ New group</button>
+    </div>`;
+  if(!S.groups.length){
+    h+=`<div style="text-align:center;padding:1.5rem 0;">
+      <div style="font-size:28px;margin-bottom:8px;">💬</div>
+      <div style="font-size:13px;font-weight:500;color:#3D1A6E;margin-bottom:4px;">No groups yet</div>
+      <div style="font-size:12px;color:#999;margin-bottom:12px;">Create a group to chat and coordinate with specific people in your village</div>
+      <button class="btn btn-primary btn-sm" onclick="openCreateGroup()">Create your first group</button>
+    </div>`;
+  }
+  S.groups.forEach(g=>{
+    const lastMsg=g.messages&&g.messages.length?g.messages[g.messages.length-1]:null;
+    const unread=g.messages?g.messages.filter(m=>!m.readBy||!m.readBy.includes(S.me)).length:0;
+    h+=`<div onclick="openGroupChat(${g.id})" style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid #EDE0FF;cursor:pointer;">
+      <div style="width:46px;height:46px;border-radius:14px;background:#8B5CC8;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💬</div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="font-size:14px;font-weight:600;color:#1a1a1a;">${g.name}</div>
+          ${unread>0?`<span style="background:#8B5CC8;color:white;border-radius:999px;padding:1px 7px;font-size:11px;">${unread}</span>`:''}
+        </div>
+        <div style="font-size:12px;color:#999;margin-top:2px;">${g.members.join(', ')}</div>
+        ${lastMsg?`<div style="font-size:12px;color:#666;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${lastMsg.author}: ${lastMsg.text}</div>`:'<div style="font-size:12px;color:#bbb;margin-top:2px;">No messages yet — say hello!</div>'}
+      </div>
+      <div style="font-size:18px;color:#C9A8E8;">›</div>
+    </div>`;
+  });
+  h+=`</div>`;
+  document.getElementById('tab-groups').innerHTML=h;
+}
+
+function openCreateGroup(){
+  cgSelected=[];
+  document.getElementById('cg-name').value='';
+  renderCgMembers();
+  openModal('create-group-modal');
+}
+
+function renderCgMembers(){
+  const el=document.getElementById('cg-members');
+  if(!el)return;
+  const all=S.friends.filter(f=>!f.isMe).map(f=>f.name);
+  el.innerHTML=all.length?all.map(name=>{
+    const on=cgSelected.includes(name);
+    return `<div onclick="toggleCgMember('${name.replace(/'/g,"\\'")}') "
+      style="padding:5px 12px;border-radius:999px;font-size:12px;cursor:pointer;font-weight:500;
+      border:1.5px solid ${on?'#8B5CC8':'#ddd'};background:${on?'#F0E8FF':'#f9f9f9'};color:${on?'#3D1A6E':'#999'};">
+      ${name}
+    </div>`;
+  }).join(''):`<div style="font-size:12px;color:#999;">Add people to your village first to include them in a group</div>`;
+}
+
+function toggleCgMember(name){
+  const i=cgSelected.indexOf(name);
+  if(i>=0)cgSelected.splice(i,1);else cgSelected.push(name);
+  renderCgMembers();
+}
+
+function createGroup(){
+  const name=document.getElementById('cg-name').value.trim();
+  if(!name){alert('Please give your group a name.');return;}
+  const members=[S.me,...cgSelected];
+  const g={id:Date.now(),name,members,messages:[],createdBy:S.me};
+  if(!S.groups)S.groups=[];
+  S.groups.push(g);
+  saveState();
+  closeModal('create-group-modal');
+  renderGroups();
+  // open the new group chat straight away
+  setTimeout(()=>openGroupChat(g.id),200);
+}
+
+function openGroupChat(gid){
+  currentGroupId=gid;
+  const g=S.groups.find(x=>x.id===gid);
+  if(!g)return;
+  document.getElementById('gc-title').textContent=g.name;
+  document.getElementById('gc-members-label').textContent=g.members.join(', ')+' · '+g.members.length+' members';
+  renderGroupMessages(g);
+  openModal('group-chat-modal');
+  // mark messages as read
+  if(g.messages)g.messages.forEach(m=>{if(!m.readBy)m.readBy=[];if(!m.readBy.includes(S.me))m.readBy.push(S.me);});
+  saveState();
+}
+
+function renderGroupMessages(g){
+  const el=document.getElementById('gc-messages');
+  if(!el)return;
+  if(!g.messages||!g.messages.length){
+    el.innerHTML=`<div style="text-align:center;padding:2rem 0;color:#999;font-size:13px;">
+      <div style="font-size:28px;margin-bottom:8px;">👋</div>
+      Say hello to ${g.name}!
+    </div>`;
+    return;
+  }
+  el.innerHTML=g.messages.map(m=>{
+    const isMe=m.author===S.me;
+    return `<div style="display:flex;flex-direction:column;align-items:${isMe?'flex-end':'flex-start'};">
+      ${!isMe?`<div style="font-size:11px;color:#999;margin-bottom:2px;padding-left:4px;">${m.author}</div>`:''}
+      <div style="max-width:78%;padding:9px 13px;border-radius:${isMe?'14px 14px 4px 14px':'14px 14px 14px 4px'};
+        background:${isMe?'#8B5CC8':'#F0E8FF'};color:${isMe?'white':'#3D1A6E'};font-size:13px;line-height:1.5;">
+        ${m.text}
+      </div>
+      <div style="font-size:10px;color:#bbb;margin-top:2px;padding:0 4px;">${m.time}</div>
+    </div>`;
+  }).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+function sendGroupMsg(){
+  const input=document.getElementById('gc-input');
+  const text=input.value.trim();
+  if(!text||!currentGroupId)return;
+  const g=S.groups.find(x=>x.id===currentGroupId);
+  if(!g)return;
+  if(!g.messages)g.messages=[];
+  const now=new Date();
+  const time=now.toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit',hour12:true});
+  g.messages.push({author:S.me,text,time,readBy:[S.me]});
+  input.value='';
+  saveState();
+  renderGroupMessages(g);
+}
+
+// ── WHO'S AROUND ─────────────────────────────────────
+
+function openOverlap(gid){
+  const g=S.groups.find(x=>x.id===gid);
+  if(!g)return;
+  document.getElementById('ov-title').textContent=`Who's around — ${g.name}`;
+  renderOverlap(g);
+  openModal('overlap-modal');
+}
+
+function isAround(memberName,day){
+  // check rhythm — for demo, use S.rhythm for current user, generate plausible data for others
+  let rhythm;
+  if(memberName===S.me){
+    rhythm=S.rhythm||{};
+  } else {
+    // seed deterministic fake rhythm for other members based on name hash
+    const hash=[...memberName].reduce((a,c)=>a+c.charCodeAt(0),0);
+    const workDayCount=hash%3+1;
+    const allDays=['Mon','Tue','Wed','Thu','Fri'];
+    rhythm={
+      workDays:allDays.filter((_,i)=>i<workDayCount&&(hash+i)%3!==0),
+      crecheDays:allDays.filter((_,i)=>(hash+i)%4===0),
+      hasNap:(hash%3===0),
+      napStart:'12:00',napEnd:'14:00'
+    };
+  }
+  const works=(rhythm.workDays||[]).includes(day);
+  const creche=(rhythm.crecheDays||[]).includes(day);
+  if(works||creche)return 'busy';
+  return 'around';
+}
+
+function renderOverlap(g){
+  const el=document.getElementById('ov-content');
+  const weekdays=['Mon','Tue','Wed','Thu','Fri'];
+
+  // heatmap
+  let h=`<div style="overflow-x:auto;margin-bottom:16px;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <tr>
+        <th style="text-align:left;padding:4px 6px;color:#999;font-weight:500;width:90px;">Person</th>
+        ${weekdays.map(d=>`<th style="text-align:center;padding:4px;color:#6B3FA0;font-weight:600;">${d}</th>`).join('')}
+      </tr>`;
+
+  g.members.forEach(name=>{
+    h+=`<tr>
+      <td style="padding:5px 6px;font-size:12px;font-weight:500;color:#1a1a1a;white-space:nowrap;overflow:hidden;max-width:90px;text-overflow:ellipsis;">${name===S.me?'You':name.split(' ')[0]}</td>
+      ${weekdays.map(d=>{
+        const status=isAround(name,d);
+        const bg=status==='around'?'#3A7A5A':status==='busy'?'#ddd':'#F0E8FF';
+        const color=status==='around'?'white':'#999';
+        const label=status==='around'?'✓':'–';
+        return `<td style="text-align:center;padding:4px;">
+          <div style="width:28px;height:28px;border-radius:8px;background:${bg};color:${color};display:flex;align-items:center;justify-content:center;font-size:13px;margin:0 auto;">${label}</div>
+        </td>`;
+      }).join('')}
+    </tr>`;
+  });
+
+  // count row
+  h+=`<tr style="border-top:1px solid #EDE0FF;">
+    <td style="padding:5px 6px;font-size:11px;color:#999;">Around</td>
+    ${weekdays.map(d=>{
+      const count=g.members.filter(n=>isAround(n,d)==='around').length;
+      const pct=Math.round(count/g.members.length*100);
+      const bg=pct>=70?'#F0E8FF':pct>=40?'#FAEEDA':'#f5f5f5';
+      const color=pct>=70?'#3D1A6E':pct>=40?'#633806':'#999';
+      return `<td style="text-align:center;padding:4px;">
+        <div style="font-size:11px;font-weight:600;color:${color};background:${bg};border-radius:6px;padding:2px 4px;">${count}/${g.members.length}</div>
+      </td>`;
+    }).join('')}
+  </tr>`;
+
+  h+=`</table></div>`;
+
+  // best days
+  const ranked=weekdays.map(d=>({
+    day:d,
+    count:g.members.filter(n=>isAround(n,d)==='around').length
+  })).sort((a,b)=>b.count-a.count);
+
+  const best=ranked.filter(x=>x.count===ranked[0].count);
+  h+=`<div style="background:#F0E8FF;border-radius:10px;padding:12px 14px;margin-bottom:12px;">
+    <div style="font-size:12px;font-weight:600;color:#3D1A6E;margin-bottom:4px;">✨ Best days for ${g.name}</div>
+    <div style="font-size:13px;color:#6B3FA0;">${best.map(x=>x.day).join(' or ')} — ${ranked[0].count} out of ${g.members.length} potentially around</div>
+  </div>`;
+
+  h+=`<div style="font-size:11px;color:#999;text-align:center;line-height:1.6;">🟢 Potentially around &nbsp; — &nbsp; Not working or in creche<br/>This is based on usual patterns, not a commitment</div>`;
+
+  h+=`<button class="btn btn-primary" style="width:100%;margin-top:14px;" onclick="closeModal('overlap-modal')">Got it</button>`;
+
+  el.innerHTML=h;
+}
+
+// ── RHYTHM ────────────────────────────────────────────
+
+function openRhythmModal(){
+  if(!S.rhythm)S.rhythm={workDays:[],crecheDays:[],napStart:'12:00',napEnd:'14:00',hasNap:false};
+  renderDayPicker('rhy-work-days','work');
+  renderDayPicker('rhy-creche-days','creche');
+  const hasNap=S.rhythm.hasNap||false;
+  document.getElementById('rhy-has-nap').checked=hasNap;
+  document.getElementById('rhy-nap-fields').style.display=hasNap?'block':'none';
+  document.getElementById('rhy-nap-start').value=S.rhythm.napStart||'12:00';
+  document.getElementById('rhy-nap-end').value=S.rhythm.napEnd||'14:00';
+  openModal('rhythm-modal');
+}
+
+function renderDayPicker(elId,type){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  const selected=type==='work'?(S.rhythm.workDays||[]):(S.rhythm.crecheDays||[]);
+  el.innerHTML=DAYS.map(d=>{
+    const on=selected.includes(d);
+    return `<div onclick="toggleDay('${d}','${type}')"
+      style="padding:6px 12px;border-radius:999px;font-size:12px;cursor:pointer;font-weight:600;
+      border:1.5px solid ${on?'#8B5CC8':'#ddd'};background:${on?'#8B5CC8':'#f9f9f9'};color:${on?'white':'#999'};">
+      ${d}
+    </div>`;
+  }).join('');
+}
+
+function toggleDay(day,type){
+  if(!S.rhythm)S.rhythm={workDays:[],crecheDays:[],napStart:'12:00',napEnd:'14:00',hasNap:false};
+  const arr=type==='work'?S.rhythm.workDays:S.rhythm.crecheDays;
+  const i=arr.indexOf(day);
+  if(i>=0)arr.splice(i,1);else arr.push(day);
+  renderDayPicker(type==='work'?'rhy-work-days':'rhy-creche-days',type);
+}
+
+function toggleNapFields(){
+  const on=document.getElementById('rhy-has-nap').checked;
+  document.getElementById('rhy-nap-fields').style.display=on?'block':'none';
+}
+
+function saveRhythm(){
+  if(!S.rhythm)S.rhythm={workDays:[],crecheDays:[],napStart:'12:00',napEnd:'14:00',hasNap:false};
+  S.rhythm.hasNap=document.getElementById('rhy-has-nap').checked;
+  S.rhythm.napStart=document.getElementById('rhy-nap-start').value;
+  S.rhythm.napEnd=document.getElementById('rhy-nap-end').value;
+  saveState();
+  closeModal('rhythm-modal');
+  renderGroups();
+}
+
+
+// restore requests badge
+const _rem=S.requests.filter(x=>x.status==='pending').length;
+const _b=document.getElementById('req-badge');
+if(_rem>0){_b.textContent=_rem;_b.style.display='';}
+// update topbar name
+if(S.me){
+  document.getElementById('top-name').textContent=S.me;
+  document.getElementById('top-av').textContent=inits(S.me);
+}
+// set invite link to current URL
+const _il=document.getElementById('inv-link');
+if(_il)_il.textContent=window.location.href;
+// new user — show onboarding
+if(!S.me){
+  setTimeout(()=>{
+    obGoTo(1);
+    openModal('user-modal');
+  },300);
+}
+renderFeed();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  const sw=`
+    const CACHE='loopd-v1';
+    const ASSETS=['/'];
+    self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
+    self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));
+  `;
+  const blob=new Blob([sw],{type:'application/javascript'});
+  const url=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url).catch(()=>{});
+}
+const manifest={
+  name:'Loopd',
+  short_name:'Loopd',
+  description:'Stay in the loop with your village',
+  start_url:'/',
+  display:'standalone',
+  background_color:'#FAF8FF',
+  theme_color:'#8B5CC8',
+  icons:[{src:`data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#8B5CC8"/><circle cx="32" cy="50" r="16" fill="#C9A8E8"/><circle cx="68" cy="50" r="16" fill="#6B3FA0"/></svg>')}`,sizes:'any',type:'image/svg+xml'}]
+};
+const mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+const murl=URL.createObjectURL(mblob);
+const link=document.createElement('link');
+link.rel='manifest';link.href=murl;
+document.head.appendChild(link);
+</script>
+</body>
+</html>
