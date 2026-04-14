@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0047)file:///C:/Users/il_go/Downloads/ketchup_5.html -->
+<!-- saved from url=(0047)file:///C:/Users/il_go/Downloads/ketchup_6.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -100,7 +100,7 @@ summary{cursor:pointer;font-size:13px;color:#999;padding:8px 0;user-select:none;
 .confetti-dot{position:absolute;width:8px;height:8px;border-radius:50%;animation:confetti-fall 1.2s ease-in forwards;pointer-events:none;}
 .img-preview{width:100%;border-radius:8px;margin-top:8px;max-height:130px;object-fit:cover;display:none;}
 </style>
-<link rel="manifest" href="blob:null/21744745-d144-4191-9781-bcdb15fed040"></head>
+<link rel="manifest" href="blob:null/204aab4a-f676-42b7-a665-c5cc950ec312"></head>
 <body>
 <div class="app">
   <div class="topbar">
@@ -129,9 +129,9 @@ summary{cursor:pointer;font-size:13px;color:#999;padding:8px 0;user-select:none;
       <text x="84" y="38" font-family="&#39;Fredoka One&#39;,cursive" font-size="36" fill="#3D1A6E">pd</text>
     </svg>
     <div class="logo-tag">stay in the loop with your village</div>
-    <div class="user-chip" onclick="openModal(&#39;user-modal&#39;)">
-      <div class="avatar" style="width:24px;height:24px;font-size:11px;background:#F0E8FF;color:#3D1A6E;" id="top-av">IL</div>
-      <span id="top-name">Ilana</span>
+    <div class="user-chip" onclick="openProfileOrOnboarding()">
+      <div class="avatar" style="width:24px;height:24px;font-size:11px;background:#F0E8FF;color:#3D1A6E;" id="top-av">?</div>
+      <span id="top-name">Me</span>
     </div>
   </div>
   <div class="nav">
@@ -210,7 +210,7 @@ summary{cursor:pointer;font-size:13px;color:#999;padding:8px 0;user-select:none;
   <div class="modal">
     <div class="modal-title">Invite others to Loopd 💜</div>
     <div style="font-size:13px;color:#666;margin-bottom:14px;">Share your link — they sign up, create their profile, then send you a request. You choose their access level.</div>
-    <div style="background:#F0E8FF;border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600;color:#3D1A6E;word-break:break-all;margin-bottom:14px;" id="inv-link">file:///C:/Users/il_go/Downloads/ketchup_5.html</div>
+    <div style="background:#F0E8FF;border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600;color:#3D1A6E;word-break:break-all;margin-bottom:14px;" id="inv-link">file:///C:/Users/il_go/Downloads/ketchup_6.html</div>
     <button class="btn btn-primary" style="width:100%;margin-bottom:8px;" onclick="shareInviteLink()">💬 Share via iMessage / WhatsApp</button>
     <button class="btn btn-outline" style="width:100%;margin-bottom:8px;" onclick="copyInviteLink()">📋 Copy link</button>
     <div style="font-size:11px;color:#999;text-align:center;margin-bottom:12px;">Anyone who opens this link can request to join your village</div>
@@ -238,6 +238,39 @@ summary{cursor:pointer;font-size:13px;color:#999;padding:8px 0;user-select:none;
 </div>
 
 
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-bg" id="profile-modal">
+  <div class="modal">
+    <div class="modal-title">✏️ Edit my profile</div>
+    <label>Your name</label>
+    <input type="text" id="ep-name">
+    <label style="margin-top:12px;">Family name</label>
+    <input type="text" id="ep-family">
+    <label style="margin-top:12px;">Your birthday</label>
+    <input type="date" id="ep-dob">
+    <label style="margin-top:12px;">Partner's name (optional)</label>
+    <input type="text" id="ep-partner" placeholder="e.g. David">
+    <label style="margin-top:12px;">Partner's birthday (optional)</label>
+    <input type="date" id="ep-partner-dob">
+    <div style="border-top:1px solid #EDE0FF;margin-top:16px;padding-top:14px;">
+      <div style="font-size:13px;font-weight:600;color:#3D1A6E;margin-bottom:10px;">Your kids</div>
+      <div id="ep-kids-list" style="margin-bottom:8px;"></div>
+      <div style="background:#F0E8FF;border-radius:10px;padding:12px;">
+        <input type="text" id="ep-kid-name" placeholder="Child&#39;s full name (e.g. Lily Rosenberg)" style="margin-bottom:8px;margin-top:0;">
+        <label>Date of birth</label>
+        <input type="date" id="ep-kid-dob" style="margin-bottom:8px;">
+        <label>What are they into?</label>
+        <input type="text" id="ep-kid-interests" placeholder="e.g. dinosaurs, Bluey, unicorns">
+        <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;" onclick="epAddKid()">+ Add child</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn btn-primary" onclick="saveProfile()">Save profile</button>
+      <button class="btn btn-outline" onclick="closeModal(&#39;profile-modal&#39;)">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- ONBOARDING MODAL — shown to new users -->
 <div class="modal-bg" id="user-modal">
   <div class="modal">
@@ -253,6 +286,12 @@ summary{cursor:pointer;font-size:13px;color:#999;padding:8px 0;user-select:none;
       <input type="text" id="ob-name" placeholder="e.g. Ilana Goldman">
       <label style="margin-top:12px;">Your family name</label>
       <input type="text" id="ob-family" placeholder="e.g. Goldman family">
+      <label style="margin-top:12px;">Your birthday</label>
+      <input type="date" id="ob-dob">
+      <label style="margin-top:12px;">Partner's name (optional)</label>
+      <input type="text" id="ob-partner" placeholder="e.g. David">
+      <label style="margin-top:12px;">Partner's birthday (optional)</label>
+      <input type="date" id="ob-partner-dob">
       <button class="btn btn-primary" style="width:100%;margin-top:16px;" onclick="obStep2()">Next →</button>
     </div>
 
@@ -262,14 +301,16 @@ summary{cursor:pointer;font-size:13px;color:#999;padding:8px 0;user-select:none;
         <button onclick="obGoTo(1)" style="background:none;border:none;color:#8B5CC8;font-size:22px;cursor:pointer;line-height:1;">←</button>
         <div>
           <div style="font-size:15px;font-weight:600;color:#3D1A6E;">Your kids</div>
-          <div style="font-size:12px;color:#999;">So your village knows their birthdays</div>
+          <div style="font-size:12px;color:#999;">So your village knows their birthdays and what they love</div>
         </div>
       </div>
       <div id="ob-kids-list" style="margin-bottom:8px;"></div>
       <div style="background:#F0E8FF;border-radius:10px;padding:12px;margin-bottom:10px;">
-        <input type="text" id="ob-kid-name" placeholder="Child&#39;s name" style="margin-bottom:8px;margin-top:0;">
+        <input type="text" id="ob-kid-name" placeholder="Child&#39;s full name (e.g. Lily Rosenberg)" style="margin-bottom:8px;margin-top:0;">
         <label>Date of birth</label>
-        <input type="date" id="ob-kid-dob">
+        <input type="date" id="ob-kid-dob" style="margin-bottom:8px;">
+        <label>What are they into? (optional)</label>
+        <input type="text" id="ob-kid-interests" placeholder="e.g. dinosaurs, Bluey, unicorns, Lego">
         <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;" onclick="obAddKid()">+ Add child</button>
       </div>
       <button class="btn btn-outline" style="width:100%;margin-bottom:8px;" onclick="obAddPregnancy()">🤰 Add a due date instead</button>
@@ -450,7 +491,8 @@ const DEFAULT_STATE={
   events:[],
   gifts:[],
   groups:[],
-  rhythm:{workDays:[],crecheDays:[],napStart:'12:00',napEnd:'14:00',hasNap:false}
+  rhythm:{workDays:[],crecheDays:[],napStart:'12:00',napEnd:'14:00',hasNap:false},
+  profile:{name:'',family:'',dob:'',partner:'',partnerDob:''}
 };
 
 function loadState(){
@@ -644,6 +686,9 @@ function renderFeed(){
       const totalKids=(e.attendees||[]).reduce((s,a)=>s+(a.kids||0),0);
       const isTrip=e.type==='trip';
       const isPreg=e.type==='pregnancy';
+      const isBirthday=e.type==='birthday';
+      const linkedGift=isBirthday?S.gifts.find(g=>g.linkedEventId===e.id):null;
+      const myGiftContrib=linkedGift?linkedGift.contributors.find(c=>c.name===S.me):null;
       const nameDisplay=e.child?e.child:e.family;
 
       if(isPreg){
@@ -675,10 +720,18 @@ function renderFeed(){
           <div class="tag-row">
             <span class="pill ${TPILL[e.type]}">${TLABEL[e.type]}</span>
             ${e.visibility?`<span class="pill pill-gray" style="font-size:10px;">${VIS_LABEL[e.visibility]||''}</span>`:''}
-            ${totalAdults>0?`<span class="pill pill-gray" style="font-size:10px;">👤 ${totalAdults} adult${totalAdults!==1?'s':''} · 🧒 ${totalKids} kid${totalKids!==1?'s':''}</span>`:''}
+            ${!isBirthday&&totalAdults>0?`<span class="pill pill-gray" style="font-size:10px;">👤 ${totalAdults} adult${totalAdults!==1?'s':''} · 🧒 ${totalKids} kid${totalKids!==1?'s':''}</span>`:''}
           </div>
         </div>
-        ${!isTrip?`<button class="btn btn-sm ${myAttendance?'btn-primary':'btn-outline'}" style="${myAttendance?'':'border-color:#8B5CC8;color:#8B5CC8;'}" onclick="openAttending(${e.id})">${myAttendance?'✓ Going':'Attending?'}</button>`:''}
+        ${isBirthday
+          ? linkedGift
+            ? myGiftContrib
+              ? `<span class="pill pill-teal" style="font-size:11px;padding:5px 10px;white-space:nowrap;">✓ You're in</span>`
+              : `<button class="btn btn-sm btn-outline" style="border-color:#8B5CC8;color:#8B5CC8;white-space:nowrap;font-size:12px;" onclick="openGiftPool(${linkedGift.id})">🎁 Join gift</button>`
+            : ''
+          : !isTrip
+            ? `<button class="btn btn-sm ${myAttendance?'btn-primary':'btn-outline'}" style="${myAttendance?'':'border-color:#8B5CC8;color:#8B5CC8;'}" onclick="openAttending(${e.id})">${myAttendance?'✓ Going':'Attending?'}</button>`
+            : ''}
       </div>`;
     });
     return r;
@@ -736,7 +789,14 @@ function renderVillage(){
       if(now<new Date(now.getFullYear(),dob.getMonth(),dob.getDate()))age--;
       const nb=new Date(now.getFullYear(),dob.getMonth(),dob.getDate());
       if(nb<now)nb.setFullYear(now.getFullYear()+1);
-      h+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #EDE0FF;"><div style="font-size:13px;font-weight:500;flex:1;">${k.name}</div><span class="pill pill-gray">${age}y old</span><span class="pill pill-red">🎂 ${Math.round((nb-now)/86400000)}d</span></div>`;
+      h+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #EDE0FF;">
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;">${k.name}</div>
+          ${k.interests?`<div style="font-size:11px;color:#6B3FA0;">Loves: ${k.interests}</div>`:''}
+        </div>
+        <span class="pill pill-gray">${age}y old</span>
+        <span class="pill pill-red">🎂 ${Math.round((nb-now)/86400000)}d</span>
+      </div>`;
     });
     if(fe.length){h+=`<div style="margin-top:8px;padding-top:8px;border-top:1px solid #EDE0FF;">`;fe.slice(0,3).forEach(e=>{h+=`<div style="font-size:12px;color:#666;padding:3px 0;">${TEMOJI[e.type]} ${e.child} · ${fmt(e.date)}</div>`;});h+=`</div>`;}
     h+=`</div>`;
@@ -1024,8 +1084,11 @@ function renderAdd(){
   document.getElementById('tab-add').innerHTML=`<div class="card">
     <div class="section-title">Add an event to your village</div>
     <label>Your name</label><input type="text" id="a-author" value="${S.me}"/>
-    <label>Child's name (optional)</label><input type="text" id="a-child" placeholder="e.g. Lily — or leave blank for family events"/>
-    <label>Family name</label><input type="text" id="a-family" placeholder="e.g. Thompson family"/>
+    <label>Child's name (optional)</label>
+    <input type="text" id="a-child" placeholder="Select or type a name — leave blank for family events" list="a-child-list" autocomplete="off" oninput="aChildSelected(this.value)"/>
+    <datalist id="a-child-list">${(()=>{const allKids=S.friends.flatMap(f=>f.kids.map(k=>k.name));return allKids.map(n=>`<option value="${n}">`).join('');})()}</datalist>
+    <label>Family name</label><input type="text" id="a-family" placeholder="e.g. Thompson family" list="a-family-list"/>
+    <datalist id="a-family-list">${S.friends.filter(f=>f.name).map(f=>`<option value="${f.name.split(' ').slice(-1)[0]+' family'}">`).join('')}</datalist>
     <label>Event type</label>
     <select id="a-type">
       <option value="birthday">🎂 Birthday</option>
@@ -1231,6 +1294,17 @@ function handleReq(id,action){
   renderRequests();if(action==='accept')renderVillage();
 }
 
+function aChildSelected(val){
+  // When a child name is picked, auto-fill Family name using the kid's last name
+  if(!val) return;
+  const parts = val.trim().split(' ');
+  if(parts.length >= 2){
+    const lastName = parts[parts.length-1];
+    const famEl = document.getElementById('a-family');
+    if(famEl && !famEl.value) famEl.value = lastName + ' family';
+  }
+}
+
 function addEvent(){
   const child=document.getElementById('a-child').value.trim();
   const family=document.getElementById('a-family').value.trim();
@@ -1337,10 +1411,12 @@ function obStep3(){
 function obAddKid(){
   const n=document.getElementById('ob-kid-name').value.trim();
   const d=document.getElementById('ob-kid-dob').value;
+  const interests=document.getElementById('ob-kid-interests').value.trim();
   if(!n){alert('Please enter a name.');return;}
-  obKids.push({name:n,dob:d||''});
+  obKids.push({name:n,dob:d||'',interests:interests||''});
   document.getElementById('ob-kid-name').value='';
   document.getElementById('ob-kid-dob').value='';
+  document.getElementById('ob-kid-interests').value='';
   renderObKids();
 }
 
@@ -1354,9 +1430,13 @@ function obAddPregnancy(){
 
 function renderObKids(){
   const list=document.getElementById('ob-kids-list');
+  if(!list)return;
   list.innerHTML=obKids.map((k,i)=>`
     <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#F0E8FF;border-radius:8px;margin-bottom:6px;">
-      <div style="flex:1;font-size:13px;font-weight:500;color:#3D1A6E;">${k.name}${k.dob?' · '+fmt(k.dob):''}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:500;color:#3D1A6E;">${k.name}${k.dob?' · '+fmt(k.dob):''}</div>
+        ${k.interests?`<div style="font-size:11px;color:#6B3FA0;margin-top:2px;">Loves: ${k.interests}</div>`:''}
+      </div>
       <button onclick="obRemoveKid(${i})" style="background:none;border:none;color:#999;cursor:pointer;font-size:16px;">×</button>
     </div>`).join('');
 }
@@ -1366,44 +1446,144 @@ function obRemoveKid(i){obKids.splice(i,1);renderObKids();}
 function obFinish(){
   const name=document.getElementById('ob-name').value.trim();
   const family=document.getElementById('ob-family').value.trim()||name.split(' ').slice(-1)[0]+' family';
+  const dob=document.getElementById('ob-dob').value;
+  const partner=document.getElementById('ob-partner').value.trim();
+  const partnerDob=document.getElementById('ob-partner-dob').value;
   if(!name)return;
   S.me=name;
   S.pendingUser=name;
   if(!S.users.includes(name))S.users.push(name);
-  // add kids as birthday events
-  obKids.forEach(k=>{
+  if(!S.profile)S.profile={};
+  S.profile={name,family,dob,partner,partnerDob};
+  // add your own birthday event
+  if(dob){
+    const next=nextBirthday(dob);
+    S.events=S.events.filter(e=>!(e.author===name&&e.child===name&&e.type==='birthday'));
+    S.events.push({id:Date.now()+1,author:name,child:name,family,type:'birthday',date:next,note:'',location:'',visibility:'close-friends',attendees:[]});
+  }
+  // add partner birthday
+  if(partner&&partnerDob){
+    const next=nextBirthday(partnerDob);
+    S.events=S.events.filter(e=>!(e.author===name&&e.child===partner&&e.type==='birthday'));
+    S.events.push({id:Date.now()+2,author:name,child:partner,family,type:'birthday',date:next,note:'',location:'',visibility:'close-friends',attendees:[]});
+  }
+  // add kids birthday events
+  obKids.forEach((k,i)=>{
     if(k.dob){
-      const now=new Date();
-      const dob=new Date(k.dob);
-      const next=new Date(dob);
-      next.setFullYear(now.getFullYear());
-      if(next<now)next.setFullYear(now.getFullYear()+1);
-      const dateStr=next.toISOString().split('T')[0];
-      S.events.push({id:Date.now()+Math.random(),author:name,child:k.name,family,type:'birthday',date:dateStr,note:'',location:'',visibility:'close-friends',attendees:[]});
+      const next=nextBirthday(k.dob);
+      S.events=S.events.filter(e=>!(e.author===name&&e.child===k.name&&e.type==='birthday'));
+      S.events.push({id:Date.now()+10+i,author:name,child:k.name,family,type:'birthday',date:next,note:k.interests?`Loves ${k.interests}`:'',location:'',visibility:'close-friends',attendees:[]});
     }
   });
   // add as a friend entry for yourself
-  S.friends.push({name,kids:obKids.map(k=>({name:k.name,dob:k.dob})),visibility:'full',circle:'friends',ci:0,isMe:true});
+  S.friends=S.friends.filter(f=>!f.isMe);
+  S.friends.push({name,kids:obKids.map(k=>({name:k.name,dob:k.dob,interests:k.interests})),visibility:'full',circle:'friends',ci:0,isMe:true});
   saveState();
   document.getElementById('top-name').textContent=name;
   document.getElementById('top-av').textContent=inits(name);
   closeModal('user-modal');
   renderFeed();
   renderVillage();
-  // show invite prompt after a moment
   setTimeout(()=>{
     if(confirm('Profile saved! 🎉\n\nWant to invite your village now?')){openModal('invite-modal');}
   },400);
 }
 
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function renderUserChips(){}
-function setPending(){}
-function addNewUser(){}
-function confirmUser(){}
+function nextBirthday(dob){
+  const now=new Date();now.setHours(0,0,0,0);
+  const d=new Date(dob);
+  const next=new Date(d);next.setFullYear(now.getFullYear());
+  if(next<now)next.setFullYear(now.getFullYear()+1);
+  return next.toISOString().split('T')[0];
+}
 
-['join-gift-modal','thankyou-modal','invite-modal','find-modal','attending-modal','user-modal','create-group-modal','group-chat-modal','overlap-modal','rhythm-modal'].forEach(id=>{
+function openProfileOrOnboarding(){
+  if(S.me)openProfileModal();
+  else{obGoTo(1);openModal('user-modal');}
+}
+
+let epKids=[];
+
+function openProfileModal(){
+  const p=S.profile||{};
+  document.getElementById('ep-name').value=p.name||S.me||'';
+  document.getElementById('ep-family').value=p.family||'';
+  document.getElementById('ep-dob').value=p.dob||'';
+  document.getElementById('ep-partner').value=p.partner||'';
+  document.getElementById('ep-partner-dob').value=p.partnerDob||'';
+  const me=S.friends.find(f=>f.isMe);
+  epKids=me&&me.kids?JSON.parse(JSON.stringify(me.kids)):[];
+  renderEpKids();
+  openModal('profile-modal');
+}
+
+function renderEpKids(){
+  const list=document.getElementById('ep-kids-list');
+  if(!list)return;
+  list.innerHTML=epKids.length?epKids.map((k,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#F0E8FF;border-radius:8px;margin-bottom:6px;">
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:500;color:#3D1A6E;">${k.name}${k.dob?' · '+fmt(k.dob):''}</div>
+        ${k.interests?`<div style="font-size:11px;color:#6B3FA0;">Loves: ${k.interests}</div>`:''}
+      </div>
+      <button onclick="epRemoveKid(${i})" style="background:none;border:none;color:#999;cursor:pointer;font-size:16px;">×</button>
+    </div>`).join(''):`<div style="font-size:12px;color:#999;padding:6px 0;">No kids added yet</div>`;
+}
+
+function epAddKid(){
+  const n=document.getElementById('ep-kid-name').value.trim();
+  const d=document.getElementById('ep-kid-dob').value;
+  const interests=document.getElementById('ep-kid-interests').value.trim();
+  if(!n){alert('Please enter a name.');return;}
+  epKids.push({name:n,dob:d||'',interests:interests||''});
+  document.getElementById('ep-kid-name').value='';
+  document.getElementById('ep-kid-dob').value='';
+  document.getElementById('ep-kid-interests').value='';
+  renderEpKids();
+}
+
+function epRemoveKid(i){epKids.splice(i,1);renderEpKids();}
+
+function saveProfile(){
+  const name=document.getElementById('ep-name').value.trim();
+  const family=document.getElementById('ep-family').value.trim();
+  const dob=document.getElementById('ep-dob').value;
+  const partner=document.getElementById('ep-partner').value.trim();
+  const partnerDob=document.getElementById('ep-partner-dob').value;
+  if(!name){alert('Please enter your name.');return;}
+  S.me=name;
+  if(!S.profile)S.profile={};
+  S.profile={name,family,dob,partner,partnerDob};
+  // update self in friends
+  S.friends=S.friends.filter(f=>!f.isMe);
+  S.friends.push({name,kids:epKids,visibility:'full',circle:'friends',ci:0,isMe:true});
+  // update birthday events
+  if(dob){
+    const next=nextBirthday(dob);
+    S.events=S.events.filter(e=>!(e.author===name&&e.child===name&&e.type==='birthday'));
+    S.events.push({id:Date.now()+1,author:name,child:name,family,type:'birthday',date:next,note:'My birthday 🎂',location:'',visibility:'close-friends',attendees:[]});
+  }
+  if(partner&&partnerDob){
+    const next=nextBirthday(partnerDob);
+    S.events=S.events.filter(e=>!(e.child===partner&&e.type==='birthday'&&e.author===name));
+    S.events.push({id:Date.now()+2,author:name,child:partner,family,type:'birthday',date:next,note:`${partner}'s birthday 🎂`,location:'',visibility:'close-friends',attendees:[]});
+  }
+  epKids.forEach((k,i)=>{
+    if(k.dob){
+      const next=nextBirthday(k.dob);
+      S.events=S.events.filter(e=>!(e.author===name&&e.child===k.name&&e.type==='birthday'));
+      S.events.push({id:Date.now()+10+i,author:name,child:k.name,family,type:'birthday',date:next,note:k.interests?`Loves ${k.interests}`:'',location:'',visibility:'close-friends',attendees:[]});
+    }
+  });
+  document.getElementById('top-name').textContent=name;
+  document.getElementById('top-av').textContent=inits(name);
+  saveState();
+  closeModal('profile-modal');
+  renderFeed();
+  renderVillage();
+}
+
+['join-gift-modal','thankyou-modal','invite-modal','find-modal','attending-modal','user-modal','profile-modal','create-group-modal','group-chat-modal','overlap-modal','rhythm-modal'].forEach(id=>{
   const el=document.getElementById(id);
   if(el)el.addEventListener('click',function(e){if(e.target===this)closeModal(id);});
 });
