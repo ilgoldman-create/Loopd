@@ -702,11 +702,35 @@ function renderFeed(){
       const myGiftContrib=linkedGift?linkedGift.contributors.find(c=>c.name===S.me):null;
       const nameDisplay=e.child?e.child:e.family;
 
+      // Convert days to months display
+      const mths=(d2)=>{
+        if(d2<=0)return{num:'🎂',lbl:'today!'};
+        if(d2<=6)return{num:d2,lbl:d2===1?'day':'days'};
+        const m=Math.max(1,Math.round(d2/30.5));
+        return{num:m,lbl:m===1?'month':'months'};
+      };
+      const mt=mths(d);
+      // Age turning (birthdays under 30)
+      const getTurningAge=(ev)=>{
+        let dob=null;
+        if(ev.child===S.me)dob=S.profile?.dob;
+        else if(ev.child===S.profile?.partner)dob=S.profile?.partnerDob;
+        else{
+          for(const f of S.friends){
+            const k=f.kids&&f.kids.find(k=>k.name===ev.child);
+            if(k&&k.dob){dob=k.dob;break;}
+          }
+        }
+        if(!dob)return null;
+        return new Date(ev.date).getFullYear()-new Date(dob).getFullYear();
+      };
+      const turningAge=isBirthday?getTurningAge(e):null;
+
       if(isPreg){
         const wks=weeksAlong(e.date);
         const pct=Math.round(wks/40*100);
         r+=`<div class="event-row">
-          <div class="days-col"><div class="days-num" style="color:#8B5CC8;">${d<0?'–':d}</div><div class="days-lbl">${d<0?'ago':'days'}</div></div>
+          <div class="days-col"><div class="days-num" style="color:#8B5CC8;">${mt.num}</div><div class="days-lbl">${mt.lbl}</div></div>
           <div style="width:38px;height:38px;border-radius:50%;background:#EDE0FF;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🤰</div>
           <div class="event-info">
             <div class="event-name">${e.family} <span style="font-weight:400;color:#999;">· baby on the way!</span></div>
@@ -722,10 +746,10 @@ function renderFeed(){
       }
 
       r+=`<div class="event-row">
-        <div class="days-col"><div class="days-num" style="color:${dc};">${d<0?'–':d}</div><div class="days-lbl">${d<0?'ago':'days'}</div></div>
+        <div class="days-col"><div class="days-num" style="color:${dc};">${mt.num}</div><div class="days-lbl">${mt.lbl}</div></div>
         ${av(nameDisplay,38)}
         <div class="event-info">
-          <div class="event-name">${TEMOJI[e.type]} ${nameDisplay} <span style="font-weight:400;color:#999;">· ${e.family}</span></div>
+          <div class="event-name">${TEMOJI[e.type]} ${nameDisplay}${turningAge!==null&&turningAge<30?` <span style="font-size:11px;background:#F0E8FF;color:#8B5CC8;padding:2px 8px;border-radius:99px;font-weight:500;">turns ${turningAge}</span>`:''} <span style="font-weight:400;color:#999;">· ${e.family}</span></div>
           <div class="event-meta">${fmt(e.date)}${e.dateEnd?' – '+fmt(e.dateEnd):''} ${e.note?'· '+e.note:''}</div>
           ${e.location?`<div style="font-size:12px;color:#8B5CC8;margin-top:3px;">📍 ${e.location}</div>`:''}
           <div class="tag-row">
@@ -1729,7 +1753,7 @@ function renderFamily(){
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
         <div style="width:40px;height:40px;border-radius:50%;background:#EDE0FF;display:flex;align-items:center;justify-content:center;font-size:20px;">🧒</div>
         <div style="flex:1;">
-          <input type="text" id="fk-name-${i}" value="${k.name||''}" placeholder="Child's full name" style="font-size:15px;font-weight:600;color:#3D1A6E;border:none;border-bottom:1.5px solid #EDE0FF;border-radius:0;padding:2px 0;background:transparent;width:100%;">
+          <input type="text" id="fk-name-${i}" value="${k.name||''}" placeholder="e.g. Lily ${p.kidsLastName||'(last name)'}" style="font-size:15px;font-weight:600;color:#3D1A6E;border:none;border-bottom:1.5px solid #EDE0FF;border-radius:0;padding:2px 0;background:transparent;width:100%;">
         </div>
         <button onclick="fRemoveKid(${i})" style="background:none;border:none;color:#ccc;font-size:20px;cursor:pointer;line-height:1;">×</button>
       </div>
@@ -1765,6 +1789,8 @@ function renderFamily(){
       <input type="text" id="f-partner" value="${p.partner||''}" placeholder="e.g. David">
       <label style="margin-top:12px;">Partner's birthday</label>
       <input type="date" id="f-partner-dob" value="${p.partnerDob||''}">
+      <label style="margin-top:12px;">Kids' last name</label>
+      <input type="text" id="f-kids-surname" value="${p.kidsLastName||''}" placeholder="e.g. Rosenberg (used for kids' names)">
     </div>
 
     <div style="font-size:13px;font-weight:600;color:#3D1A6E;margin:4px 0 10px;">🧒 Your kids</div>
@@ -1821,6 +1847,7 @@ function saveFamily(){
   const dob=document.getElementById('f-dob').value;
   const partner=document.getElementById('f-partner').value.trim();
   const partnerDob=document.getElementById('f-partner-dob').value;
+  const kidsLastName=document.getElementById('f-kids-surname').value.trim();
   if(!name){alert('Please enter your name.');return;}
 
   // Collect kids from DOM
@@ -1837,7 +1864,7 @@ function saveFamily(){
 
   S.me=name;
   if(!S.profile)S.profile={};
-  S.profile={name,family,dob,partner,partnerDob};
+  S.profile={name,family,dob,partner,partnerDob,kidsLastName};
 
   // Update self in friends
   S.friends=S.friends.filter(f=>!f.isMe);
