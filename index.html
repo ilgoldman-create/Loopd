@@ -141,6 +141,7 @@ summary{cursor:pointer;font-size:13px;color:#999;padding:8px 0;user-select:none;
     <button class="nav-btn" onclick="showTab(&#39;gifts&#39;,this)">🎁 Gifts</button>
     <button class="nav-btn" onclick="showTab(&#39;add&#39;,this)">🎉 Add event</button>
     <button class="nav-btn" onclick="showTab(&#39;requests&#39;,this)">👫 Build my village <span class="badge" id="req-badge" style="display:none;">0</span></button>
+    <button class="nav-btn" onclick="showTab(&#39;family&#39;,this)">👨‍👩‍👧 My family</button>
   </div>
   <div id="tab-feed"><div class="grid2">
     <div class="stat"><div class="stat-num">0</div><div class="stat-lbl">upcoming</div></div>
@@ -153,6 +154,7 @@ summary{cursor:pointer;font-size:13px;color:#999;padding:8px 0;user-select:none;
   <div id="tab-gifts" style="display:none;"></div>
   <div id="tab-add" style="display:none;"></div>
   <div id="tab-requests" style="display:none;"></div>
+  <div id="tab-family" style="display:none;"></div>
 </div>
 
 <div class="modal-bg" id="join-gift-modal">
@@ -1589,7 +1591,8 @@ function saveProfile(){
 });
 
 function showTab(tab,btn){
-  ['feed','village','groups','gifts','add','requests'].forEach(t=>{document.getElementById('tab-'+t).style.display=t===tab?'block':'none';});
+  ['feed','village','groups','gifts','add','requests','family'].forEach(t=>{document.getElementById('tab-'+t).style.display=t===tab?'block':'none';});
+  if(tab==='family')renderFamily();
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   if(btn)btn.classList.add('active');
   if(tab==='feed')renderFeed();
@@ -1598,6 +1601,165 @@ function showTab(tab,btn){
   else if(tab==='gifts')renderGifts();
   else if(tab==='add')renderAdd();
   else if(tab==='requests')renderRequests();
+}
+
+// ── MY FAMILY TAB ─────────────────────────────────────
+
+const WEEKDAYS=['Mon','Tue','Wed','Thu','Fri'];
+
+function renderFamily(){
+  const p=S.profile||{};
+  const me=S.friends.find(f=>f.isMe)||{};
+  const kids=me.kids||[];
+
+  let kidsHtml=kids.map((k,i)=>{
+    const cdDays=k.childcareDays||[];
+    const dayBtns=WEEKDAYS.map(d=>`<button onclick="fToggleCcDay(${i},'${d}')" style="padding:5px 10px;border-radius:20px;border:1.5px solid ${cdDays.includes(d)?'#8B5CC8':'#ddd'};background:${cdDays.includes(d)?'#8B5CC8':'#fff'};color:${cdDays.includes(d)?'#fff':'#666'};font-size:12px;font-weight:500;cursor:pointer;">${d}</button>`).join('');
+    const hasNap=k.napStart||k.napEnd;
+    return `
+    <div class="card" id="fkid-card-${i}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#EDE0FF;display:flex;align-items:center;justify-content:center;font-size:20px;">🧒</div>
+        <div style="flex:1;">
+          <input type="text" id="fk-name-${i}" value="${k.name||''}" placeholder="Child's full name" style="font-size:15px;font-weight:600;color:#3D1A6E;border:none;border-bottom:1.5px solid #EDE0FF;border-radius:0;padding:2px 0;background:transparent;width:100%;">
+        </div>
+        <button onclick="fRemoveKid(${i})" style="background:none;border:none;color:#ccc;font-size:20px;cursor:pointer;line-height:1;">×</button>
+      </div>
+
+      <label style="font-size:12px;color:#888;margin-bottom:4px;display:block;">Date of birth</label>
+      <input type="date" id="fk-dob-${i}" value="${k.dob||''}" style="margin-bottom:12px;">
+
+      <label style="font-size:12px;color:#888;margin-bottom:4px;display:block;">What are they into?</label>
+      <input type="text" id="fk-interests-${i}" value="${k.interests||''}" placeholder="e.g. dinosaurs, Bluey, Lego" style="margin-bottom:12px;">
+
+      <label style="font-size:12px;color:#888;margin-bottom:6px;display:block;">🏫 Childcare / kinder days</label>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;" id="fk-cc-${i}">${dayBtns}</div>
+
+      <label style="font-size:12px;color:#888;margin-bottom:6px;display:block;">😴 Nap window <span style="font-size:11px;color:#bbb;">(leave blank if no naps)</span></label>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <input type="time" id="fk-nap-start-${i}" value="${k.napStart||''}" style="flex:1;margin-bottom:0;">
+        <span style="color:#999;font-size:13px;">to</span>
+        <input type="time" id="fk-nap-end-${i}" value="${k.napEnd||''}" style="flex:1;margin-bottom:0;">
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('tab-family').innerHTML=`
+    <div class="card">
+      <div class="section-title">👤 My details</div>
+      <label>Your name</label>
+      <input type="text" id="f-name" value="${p.name||S.me||''}" placeholder="e.g. Ilana Goldman">
+      <label style="margin-top:12px;">Family name</label>
+      <input type="text" id="f-family" value="${p.family||''}" placeholder="e.g. Rosenberg family">
+      <label style="margin-top:12px;">Your birthday</label>
+      <input type="date" id="f-dob" value="${p.dob||''}">
+      <label style="margin-top:12px;">Partner's name</label>
+      <input type="text" id="f-partner" value="${p.partner||''}" placeholder="e.g. David">
+      <label style="margin-top:12px;">Partner's birthday</label>
+      <input type="date" id="f-partner-dob" value="${p.partnerDob||''}">
+    </div>
+
+    <div style="font-size:13px;font-weight:600;color:#3D1A6E;margin:4px 0 10px;">🧒 Your kids</div>
+    <div id="f-kids-list">${kidsHtml}</div>
+
+    <button class="btn btn-outline" style="width:100%;margin-bottom:12px;" onclick="fAddKidCard()">+ Add a child</button>
+    <button class="btn btn-primary" style="width:100%;" onclick="saveFamily()">💾 Save family profile</button>
+    <div id="f-saved-msg" style="display:none;text-align:center;color:#22a36a;font-size:13px;margin-top:10px;">✓ Saved!</div>
+  `;
+}
+
+let fKidsBuffer=[];
+
+function fToggleCcDay(kidIdx,day){
+  // Read current kids from DOM and toggle day
+  const me=S.friends.find(f=>f.isMe)||{};
+  const kids=JSON.parse(JSON.stringify(me.kids||[]));
+  if(!kids[kidIdx])return;
+  if(!kids[kidIdx].childcareDays)kids[kidIdx].childcareDays=[];
+  const idx=kids[kidIdx].childcareDays.indexOf(day);
+  if(idx>=0)kids[kidIdx].childcareDays.splice(idx,1);
+  else kids[kidIdx].childcareDays.push(day);
+  // Persist to me friend
+  const meFriend=S.friends.find(f=>f.isMe);
+  if(meFriend)meFriend.kids=kids;
+  saveState();
+  // Re-render just the day buttons for this kid
+  const ccDiv=document.getElementById('fk-cc-'+kidIdx);
+  if(ccDiv){
+    const cdDays=kids[kidIdx].childcareDays||[];
+    ccDiv.innerHTML=WEEKDAYS.map(d=>`<button onclick="fToggleCcDay(${kidIdx},'${d}')" style="padding:5px 10px;border-radius:20px;border:1.5px solid ${cdDays.includes(d)?'#8B5CC8':'#ddd'};background:${cdDays.includes(d)?'#8B5CC8':'#fff'};color:${cdDays.includes(d)?'#fff':'#666'};font-size:12px;font-weight:500;cursor:pointer;">${d}</button>`).join('');
+  }
+}
+
+function fAddKidCard(){
+  const me=S.friends.find(f=>f.isMe);
+  if(me){if(!me.kids)me.kids=[];me.kids.push({name:'',dob:'',interests:'',childcareDays:[],napStart:'',napEnd:''});}
+  saveState();
+  renderFamily();
+  // Scroll to bottom
+  setTimeout(()=>document.getElementById('tab-family').lastElementChild?.scrollIntoView({behavior:'smooth'}),100);
+}
+
+function fRemoveKid(i){
+  const me=S.friends.find(f=>f.isMe);
+  if(me&&me.kids)me.kids.splice(i,1);
+  saveState();
+  renderFamily();
+}
+
+function saveFamily(){
+  const name=document.getElementById('f-name').value.trim();
+  const family=document.getElementById('f-family').value.trim();
+  const dob=document.getElementById('f-dob').value;
+  const partner=document.getElementById('f-partner').value.trim();
+  const partnerDob=document.getElementById('f-partner-dob').value;
+  if(!name){alert('Please enter your name.');return;}
+
+  // Collect kids from DOM
+  const me=S.friends.find(f=>f.isMe)||{};
+  const existingKids=me.kids||[];
+  const updatedKids=existingKids.map((k,i)=>({
+    ...k,
+    name:(document.getElementById('fk-name-'+i)?.value||k.name).trim(),
+    dob:document.getElementById('fk-dob-'+i)?.value||k.dob||'',
+    interests:(document.getElementById('fk-interests-'+i)?.value||k.interests||'').trim(),
+    napStart:document.getElementById('fk-nap-start-'+i)?.value||'',
+    napEnd:document.getElementById('fk-nap-end-'+i)?.value||'',
+  })).filter(k=>k.name);
+
+  S.me=name;
+  if(!S.profile)S.profile={};
+  S.profile={name,family,dob,partner,partnerDob};
+
+  // Update self in friends
+  S.friends=S.friends.filter(f=>!f.isMe);
+  S.friends.push({name,kids:updatedKids,visibility:'full',circle:'friends',ci:0,isMe:true});
+
+  // Update birthday events
+  if(dob){
+    const next=nextBirthday(dob);
+    S.events=S.events.filter(e=>!(e.author===name&&e.child===name&&e.type==='birthday'));
+    S.events.push({id:Date.now()+1,author:name,child:name,family,type:'birthday',date:next,note:'My birthday 🎂',location:'',visibility:'close-friends',attendees:[]});
+  }
+  if(partner&&partnerDob){
+    const next=nextBirthday(partnerDob);
+    S.events=S.events.filter(e=>!(e.child===partner&&e.type==='birthday'&&e.author===name));
+    S.events.push({id:Date.now()+2,author:name,child:partner,family,type:'birthday',date:next,note:`${partner}'s birthday 🎂`,location:'',visibility:'close-friends',attendees:[]});
+  }
+  updatedKids.forEach((k,i)=>{
+    if(k.dob){
+      const next=nextBirthday(k.dob);
+      S.events=S.events.filter(e=>!(e.author===name&&e.child===k.name&&e.type==='birthday'));
+      S.events.push({id:Date.now()+10+i,author:name,child:k.name,family,type:'birthday',date:next,note:k.interests?`Loves ${k.interests}`:'',location:'',visibility:'close-friends',attendees:[]});
+    }
+  });
+
+  document.getElementById('top-name').textContent=name;
+  document.getElementById('top-av').textContent=inits(name);
+  saveState();
+  renderFamily();
+  const msg=document.getElementById('f-saved-msg');
+  if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',2500);}
 }
 
 // ── GROUPS ────────────────────────────────────────────
