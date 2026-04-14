@@ -129,7 +129,8 @@ summary{cursor:pointer;font-size:13px;color:#999;padding:8px 0;user-select:none;
       <text x="84" y="38" font-family="&#39;Fredoka One&#39;,cursive" font-size="36" fill="#3D1A6E">pd</text>
     </svg>
     <div class="logo-tag">stay in the loop with your village</div>
-    <div class="user-chip" onclick="openProfileOrOnboarding()">
+    <button id="push-btn" onclick="registerPush()" class="btn btn-outline" style="margin-left:auto;font-size:12px;padding:5px 11px;border-color:#C9A8E8;color:#8B5CC8;">🔔 Get notified</button>
+    <div class="user-chip" onclick="openProfileOrOnboarding()" style="margin-left:8px;">
       <div class="avatar" style="width:24px;height:24px;font-size:11px;background:#F0E8FF;color:#3D1A6E;" id="top-av">?</div>
       <span id="top-name">Me</span>
     </div>
@@ -587,6 +588,14 @@ setInterval(async()=>{
 
 const S=loadState();
 
+// Register service worker and check push status on load
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/Loopd/sw.js').then(reg=>{
+    console.log('SW registered:',reg.scope);
+    checkPushStatus();
+  }).catch(e=>console.log('SW registration failed:',e));
+}
+
 function days(d){const t=new Date();t.setHours(0,0,0,0);const x=new Date(d);x.setHours(0,0,0,0);return Math.round((x-t)/86400000);}
 function fmt(d){return new Date(d).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});}
 function inits(n){return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
@@ -723,6 +732,7 @@ function renderFeed(){
             <span class="pill ${TPILL[e.type]}">${TLABEL[e.type]}</span>
             ${e.visibility?`<span class="pill pill-gray" style="font-size:10px;">${VIS_LABEL[e.visibility]||''}</span>`:''}
             ${!isBirthday&&totalAdults>0?`<span class="pill pill-gray" style="font-size:10px;">👤 ${totalAdults} adult${totalAdults!==1?'s':''} · 🧒 ${totalKids} kid${totalKids!==1?'s':''}</span>`:''}
+            <button onclick="addToCalendar(${e.id})" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0 2px;opacity:0.6;" title="Add to calendar">📅</button>
           </div>
         </div>
         ${isBirthday
@@ -1294,6 +1304,104 @@ function handleReq(id,action){
   const b=document.getElementById('req-badge');b.textContent=rem;if(rem===0)b.style.display='none';else b.style.display='';
   saveState();
   renderRequests();if(action==='accept')renderVillage();
+}
+
+// ── ADD TO CALENDAR ───────────────────────────────────
+
+function addToCalendar(eventId){
+  const e=S.events.find(x=>x.id===eventId);
+  if(!e)return;
+  const d=new Date(e.date+'T00:00:00');
+  const pad=n=>String(n).padStart(2,'0');
+  const icsDate=d2=>`${d2.getFullYear()}${pad(d2.getMonth()+1)}${pad(d2.getDate())}`;
+  const title=e.child?`${e.child}'s ${TLABEL[e.type]||e.type}`:`${e.family} ${TLABEL[e.type]||e.type}`;
+  const desc=(e.note||'').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+  const loc=(e.location||'').replace(/,/g,'\\,');
+  const startDate=icsDate(d);
+  const endD=new Date(d);endD.setDate(endD.getDate()+1);
+  const endDate=icsDate(endD);
+  const uid=`loopd-${e.id}@loopd.app`;
+  const ics=[
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Loopd//Loopd//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${uid}`,
+    `DTSTART;VALUE=DATE:${startDate}`,
+    `DTEND;VALUE=DATE:${endDate}`,
+    `SUMMARY:${title}`,
+    desc?`DESCRIPTION:${desc}`:'',
+    loc?`LOCATION:${loc}`:'',
+    'BEGIN:VALARM',
+    'TRIGGER:-P1DT9H',
+    'ACTION:DISPLAY',
+    `DESCRIPTION:Tomorrow: ${title}`,
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].filter(Boolean).join('\r\n');
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=title.replace(/[^a-z0-9]/gi,'_')+'.ics';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
+}
+
+// ── PUSH NOTIFICATIONS ────────────────────────────────
+
+const VAPID_PUBLIC_KEY='BC9UuIROuGbsHHW6eofWiC0kJkMncMjQItE0zStaer1K6oscxWCc903hViCBxwaxNqk6IxBX5wst4Akv77vB-Aw';
+
+function urlBase64ToUint8Array(base64String){
+  const padding='='.repeat((4-base64String.length%4)%4);
+  const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
+  const raw=window.atob(base64);
+  return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)));
+}
+
+async function registerPush(){
+  if(!('serviceWorker' in navigator)||!('PushManager' in window)){
+    alert('Push notifications are not supported on this browser.');return;
+  }
+  const perm=await Notification.requestPermission();
+  if(perm!=='granted'){alert('Notifications blocked — please allow them in your browser settings.');return;}
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub){
+      sub=await reg.pushManager.subscribe({
+        userVisibleOnly:true,
+        applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    }
+    // Store subscription in Supabase via shared state
+    if(!S.pushSubscriptions)S.pushSubscriptions=[];
+    const subJson=sub.toJSON();
+    const existing=S.pushSubscriptions.findIndex(s=>s.endpoint===subJson.endpoint);
+    if(existing>=0)S.pushSubscriptions[existing]=subJson;
+    else S.pushSubscriptions.push(subJson);
+    saveState();
+    const btn=document.getElementById('push-btn');
+    if(btn){btn.textContent='🔔 Notifications on';btn.style.background='#8B5CC8';btn.style.color='#fff';btn.style.borderColor='#8B5CC8';}
+    alert('🎉 You\'re all set! You\'ll get reminders for upcoming birthdays and events.');
+  }catch(err){
+    console.error('Push subscription failed:',err);
+    alert('Could not enable notifications: '+err.message);
+  }
+}
+
+async function checkPushStatus(){
+  const btn=document.getElementById('push-btn');
+  if(!btn)return;
+  if(!('serviceWorker' in navigator)||!('PushManager' in window)){btn.style.display='none';return;}
+  const reg=await navigator.serviceWorker.ready.catch(()=>null);
+  if(!reg)return;
+  const sub=await reg.pushManager.getSubscription().catch(()=>null);
+  if(sub&&Notification.permission==='granted'){
+    btn.textContent='🔔 Notifications on';btn.style.background='#8B5CC8';btn.style.color='#fff';btn.style.borderColor='#8B5CC8';
+  }
 }
 
 function aChildSelected(val){
