@@ -281,10 +281,14 @@ summary{cursor:pointer;font-size:13px;color:#999;padding:8px 0;user-select:none;
     <!-- Step 1: Name + family -->
     <div id="ob-step1" style="display: block;">
       <div style="text-align:center;margin-bottom:1.25rem;">
-        <div style="font-family:&#39;Fredoka One&#39;,cursive;font-size:26px;color:#3D1A6E;">Loopd</div>
-        <div style="font-size:13px;color:#6B3FA0;margin-top:2px;margin-bottom:12px;">stay in the loop with your village</div>
-        <div style="font-size:15px;font-weight:600;color:#1a1a1a;">Welcome! Let's set up your profile</div>
+        <div style="font-family:&#39;Fredoka One&#39;,cursive;font-size:30px;color:#3D1A6E;">Loopd</div>
+        <div style="font-size:13px;color:#6B3FA0;margin-top:2px;">stay in the loop with your village</div>
       </div>
+      <div style="background:#F0E8FF;border-radius:12px;padding:14px 16px;margin-bottom:18px;">
+        <div style="font-size:14px;font-weight:600;color:#3D1A6E;margin-bottom:6px;">What is Loopd?</div>
+        <div style="font-size:13px;color:#4A1A8C;line-height:1.6;">Loopd is your private space to stay connected with your closest people. See upcoming birthdays, share milestones, pool gifts, and coordinate plans — all in one place, just for your village. No public feed. No strangers. Just the people who matter.</div>
+      </div>
+      <div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Let's set up your profile</div>
       <label>Your name</label>
       <input type="text" id="ob-name" placeholder="e.g. Ilana Goldman">
       <label style="margin-top:12px;">Your family name</label>
@@ -726,6 +730,16 @@ function renderFeed(){
       };
       const turningAge=isBirthday?getTurningAge(e):null;
 
+      // Get kid interests for birthday display
+      const getInterests=(ev)=>{
+        for(const f of S.friends){
+          const k=f.kids&&f.kids.find(k=>k.name===ev.child);
+          if(k&&k.interests)return k.interests;
+        }
+        return null;
+      };
+      const interests=isBirthday?getInterests(e):null;
+
       if(isPreg){
         const wks=weeksAlong(e.date);
         const pct=Math.round(wks/40*100);
@@ -734,12 +748,12 @@ function renderFeed(){
           <div style="width:38px;height:38px;border-radius:50%;background:#EDE0FF;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🤰</div>
           <div class="event-info">
             <div class="event-name">${e.family} <span style="font-weight:400;color:#999;">· baby on the way!</span></div>
-            <div class="event-meta">Due ${fmt(e.date)} ${e.note?'· '+e.note:''}</div>
+            <div class="event-meta">Due ${fmt(e.date)}</div>
             <div style="margin-top:6px;">
               <div style="display:flex;justify-content:space-between;font-size:11px;color:#6B3FA0;margin-bottom:3px;"><span>Week ${wks} of 40</span><span>${pct}%</span></div>
               <div style="height:5px;background:#EDE0FF;border-radius:999px;overflow:hidden;"><div style="height:5px;background:#8B5CC8;border-radius:999px;width:${pct}%;"></div></div>
             </div>
-            <div class="tag-row"><span class="pill pill-pink">Baby on the way</span>${e.visibility?`<span class="pill pill-gray" style="font-size:10px;">${VIS_LABEL[e.visibility]||''}</span>`:''}</div>
+            <button onclick="addToCalendar(${e.id})" class="btn btn-outline btn-sm" style="margin-top:8px;font-size:11px;color:#8B5CC8;border-color:#C9A8E8;padding:4px 12px;">📅 Add to calendar</button>
           </div>
         </div>`;
         return;
@@ -749,25 +763,23 @@ function renderFeed(){
         <div class="days-col"><div class="days-num" style="color:${dc};">${mt.num}</div><div class="days-lbl">${mt.lbl}</div></div>
         ${av(nameDisplay,38)}
         <div class="event-info">
-          <div class="event-name">${TEMOJI[e.type]} ${nameDisplay}${turningAge!==null&&turningAge<30?` <span style="font-size:11px;background:#F0E8FF;color:#8B5CC8;padding:2px 8px;border-radius:99px;font-weight:500;">turns ${turningAge}</span>`:''} <span style="font-weight:400;color:#999;">· ${e.family}</span></div>
-          <div class="event-meta">${fmt(e.date)}${e.dateEnd?' – '+fmt(e.dateEnd):''} ${e.note?'· '+e.note:''}</div>
-          ${e.location?`<div style="font-size:12px;color:#8B5CC8;margin-top:3px;">📍 ${e.location}</div>`:''}
-          <div class="tag-row">
-            <span class="pill ${TPILL[e.type]}">${TLABEL[e.type]}</span>
-            ${e.visibility?`<span class="pill pill-gray" style="font-size:10px;">${VIS_LABEL[e.visibility]||''}</span>`:''}
-            ${!isBirthday&&totalAdults>0?`<span class="pill pill-gray" style="font-size:10px;">👤 ${totalAdults} adult${totalAdults!==1?'s':''} · 🧒 ${totalKids} kid${totalKids!==1?'s':''}</span>`:''}
-            <button onclick="addToCalendar(${e.id})" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0 2px;opacity:0.6;" title="Add to calendar">📅</button>
+          <div class="event-name">${TEMOJI[e.type]} ${nameDisplay}${turningAge!==null&&turningAge<30?` <span style="font-size:11px;background:#F0E8FF;color:#8B5CC8;padding:2px 8px;border-radius:99px;font-weight:500;">turns ${turningAge}</span>`:''}</div>
+          <div class="event-meta">${fmt(e.date)}${e.dateEnd?' – '+fmt(e.dateEnd):''}</div>
+          ${interests?`<div style="font-size:11px;color:#8B5CC8;margin-top:3px;">💫 Loves ${interests}</div>`:''}
+          ${!isBirthday&&e.location?`<div style="font-size:12px;color:#8B5CC8;margin-top:3px;">📍 ${e.location}</div>`:''}
+          <div class="tag-row" style="margin-top:8px;">
+            <button onclick="addToCalendar(${e.id})" class="btn btn-outline btn-sm" style="font-size:11px;color:#8B5CC8;border-color:#C9A8E8;padding:4px 12px;">📅 Add to calendar</button>
+            ${isBirthday
+              ? linkedGift
+                ? myGiftContrib
+                  ? `<span class="pill pill-teal" style="font-size:11px;padding:5px 10px;white-space:nowrap;">✓ You're in</span>`
+                  : `<button class="btn btn-sm btn-outline" style="border-color:#8B5CC8;color:#8B5CC8;white-space:nowrap;font-size:12px;" onclick="openGiftPool(${linkedGift.id})">🎁 Join gift</button>`
+                : ''
+              : !isTrip
+                ? `<button class="btn btn-sm ${myAttendance?'btn-primary':'btn-outline'}" style="${myAttendance?'':'border-color:#8B5CC8;color:#8B5CC8;'}" onclick="openAttending(${e.id})">${myAttendance?'✓ Going':'Attending?'}</button>`
+            : ''}
           </div>
         </div>
-        ${isBirthday
-          ? linkedGift
-            ? myGiftContrib
-              ? `<span class="pill pill-teal" style="font-size:11px;padding:5px 10px;white-space:nowrap;">✓ You're in</span>`
-              : `<button class="btn btn-sm btn-outline" style="border-color:#8B5CC8;color:#8B5CC8;white-space:nowrap;font-size:12px;" onclick="openGiftPool(${linkedGift.id})">🎁 Join gift</button>`
-            : ''
-          : !isTrip
-            ? `<button class="btn btn-sm ${myAttendance?'btn-primary':'btn-outline'}" style="${myAttendance?'':'border-color:#8B5CC8;color:#8B5CC8;'}" onclick="openAttending(${e.id})">${myAttendance?'✓ Going':'Attending?'}</button>`
-            : ''}
       </div>`;
     });
     return r;
@@ -1787,10 +1799,16 @@ function renderFamily(){
       <input type="date" id="f-dob" value="${p.dob||''}">
       <label style="margin-top:12px;">Partner's name</label>
       <input type="text" id="f-partner" value="${p.partner||''}" placeholder="e.g. David">
+      <label style="margin-top:12px;">Partner's last name</label>
+      <input type="text" id="f-partner-lastname" value="${p.partnerLastName||''}" placeholder="e.g. Rosenberg">
       <label style="margin-top:12px;">Partner's birthday</label>
       <input type="date" id="f-partner-dob" value="${p.partnerDob||''}">
       <label style="margin-top:12px;">Kids' last name</label>
-      <input type="text" id="f-kids-surname" value="${p.kidsLastName||''}" placeholder="e.g. Rosenberg (used for kids' names)">
+      <input type="text" id="f-kids-surname" value="${p.kidsLastName||''}" placeholder="e.g. Rosenberg">
+      <div style="display:flex;gap:6px;margin-top:6px;">
+        <button type="button" onclick="document.getElementById('f-kids-surname').value=(document.getElementById('f-name').value.split(' ').slice(1).join(' ')||'')" style="font-size:11px;padding:3px 10px;border-radius:99px;border:1px solid #C9A8E8;background:#F0E8FF;color:#6B3FA0;cursor:pointer;">↑ Use my surname</button>
+        <button type="button" onclick="document.getElementById('f-kids-surname').value=document.getElementById('f-partner-lastname').value" style="font-size:11px;padding:3px 10px;border-radius:99px;border:1px solid #C9A8E8;background:#F0E8FF;color:#6B3FA0;cursor:pointer;">↑ Use partner's surname</button>
+      </div>
     </div>
 
     <div style="font-size:13px;font-weight:600;color:#3D1A6E;margin:4px 0 10px;">🧒 Your kids</div>
@@ -1846,6 +1864,7 @@ function saveFamily(){
   const family=document.getElementById('f-family').value.trim();
   const dob=document.getElementById('f-dob').value;
   const partner=document.getElementById('f-partner').value.trim();
+  const partnerLastName=document.getElementById('f-partner-lastname').value.trim();
   const partnerDob=document.getElementById('f-partner-dob').value;
   const kidsLastName=document.getElementById('f-kids-surname').value.trim();
   if(!name){alert('Please enter your name.');return;}
@@ -1864,11 +1883,14 @@ function saveFamily(){
 
   S.me=name;
   if(!S.profile)S.profile={};
-  S.profile={name,family,dob,partner,partnerDob,kidsLastName};
+  S.profile={name,family,dob,partner,partnerLastName,partnerDob,kidsLastName};
 
   // Update self in friends
   S.friends=S.friends.filter(f=>!f.isMe);
   S.friends.push({name,kids:updatedKids,visibility:'full',circle:'friends',ci:0,isMe:true});
+
+  // Update family name on ALL existing events authored by this user
+  S.events.forEach(ev=>{ if(ev.author===name||ev.author===S.me) ev.family=family; });
 
   // Update birthday events
   if(dob){
