@@ -520,7 +520,10 @@ let syncTimeout=null;
 function syncToCloud(){
   clearTimeout(syncTimeout);
   syncTimeout=setTimeout(async()=>{
-    await sb.upsert('loopd_data',{id:'shared',data:JSON.stringify(S),updated_at:new Date().toISOString()});
+    const now=new Date().toISOString();
+    await sb.upsert('loopd_data',{id:'shared',data:JSON.stringify(S),updated_at:now});
+    // Update _lastSync so the next poll doesn't immediately overwrite what we just saved
+    S._lastSync=new Date(now).getTime();
   },800);
 }
 
@@ -531,10 +534,12 @@ async function loadFromCloud(){
     try{
       const cloud=JSON.parse(rows[0].data);
       // merge cloud into local — cloud wins for shared data
-      // but keep local user identity if cloud has no user
+      // but keep local user identity and profile if already set
       const myName=S.me||cloud.me||'';
+      const myProfile=S.profile&&S.profile.name?S.profile:null;
       Object.assign(S,cloud);
       if(myName&&!S.me)S.me=myName;
+      if(myProfile)S.profile=myProfile; // restore own profile if it was already set
       // keep local rhythm if cloud has empty one
       if(!S.rhythm||!S.rhythm.workDays)S.rhythm=loadState().rhythm||DEFAULT_STATE.rhythm;
       saveState();
@@ -576,9 +581,11 @@ setInterval(async()=>{
         if(cloudTime>localTime){
           const myName=S.me;
           const myRhythm=S.rhythm;
+          const myProfile=S.profile; // preserve own profile — don't let cloud overwrite it
           Object.assign(S,cloud);
           if(myName)S.me=myName;
           if(myRhythm&&myRhythm.workDays&&myRhythm.workDays.length)S.rhythm=myRhythm;
+          if(myProfile&&myProfile.name)S.profile=myProfile;
           S._lastSync=cloudTime;
           localStorage.setItem('loopd-state',JSON.stringify(S));
           // silently re-render current tab
