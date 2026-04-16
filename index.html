@@ -712,7 +712,7 @@ function renderFeed(){
       const linkedGift=isBirthday?S.gifts.find(g=>g.linkedEventId===e.id):null;
       const myGiftContrib=linkedGift?linkedGift.contributors.find(c=>c.name===S.me):null;
       const nameDisplay=e.child?e.child:e.family;
-      const familySurname=e.family?e.family.replace(/\s*family\s*$/i,''):'';
+      const familySurname=(()=>{if(!e.child)return '';if(e.child===S.profile?.partner)return S.profile?.partnerLastName||(e.family?e.family.replace(/\s*family\s*$/i,''):'');if(e.author===S.me&&e.child!==S.me)return S.profile?.kidsLastName||(e.family?e.family.replace(/\s*family\s*$/i,''):'');return e.family?e.family.replace(/\s*family\s*$/i,''):'';})();
       const fullNameDisplay=(e.child&&familySurname)?`${e.child} <span style="font-size:12px;font-weight:400;color:#aaa;">${familySurname}</span>`:nameDisplay;
 
       // Convert days to months display
@@ -1744,8 +1744,9 @@ function saveProfile(){
   }
   if(partner&&partnerDob){
     const next=nextBirthday(partnerDob);
+    const partnerFamily=partnerLastName?partnerLastName+' family':family;
     S.events=S.events.filter(e=>!(e.child===partner&&e.type==='birthday'&&e.author===name));
-    S.events.push({id:Date.now()+2,author:name,child:partner,family,type:'birthday',date:next,note:`${partner}'s birthday 🎂`,location:'',visibility:'close-friends',attendees:[]});
+    S.events.push({id:Date.now()+2,author:name,child:partner,family:partnerFamily,type:'birthday',date:next,note:`${partner}'s birthday 🎂`,location:'',visibility:'close-friends',attendees:[]});
   }
   epKids.forEach((k,i)=>{
     if(k.dob){
@@ -1923,7 +1924,7 @@ function saveFamily(){
   S.friends.push({name,kids:updatedKids,visibility:'full',circle:'friends',ci:0,isMe:true});
 
   // Update family name on ALL existing events authored by this user
-  S.events.forEach(ev=>{ if(ev.author===name||ev.author===S.me) ev.family=family; });
+  S.events.forEach(ev=>{ if((ev.author===name||ev.author===S.me)&&ev.child===name) ev.family=family; });
 
   // Update birthday events
   if(dob){
@@ -1936,11 +1937,12 @@ function saveFamily(){
     S.events=S.events.filter(e=>!(e.child===partner&&e.type==='birthday'&&e.author===name));
     S.events.push({id:Date.now()+2,author:name,child:partner,family,type:'birthday',date:next,note:`${partner}'s birthday 🎂`,location:'',visibility:'close-friends',attendees:[]});
   }
+  const kidsFamily=kidsLastName?kidsLastName+' family':family;
   updatedKids.forEach((k,i)=>{
     if(k.dob){
       const next=nextBirthday(k.dob);
       S.events=S.events.filter(e=>!(e.author===name&&e.child===k.name&&e.type==='birthday'));
-      S.events.push({id:Date.now()+10+i,author:name,child:k.name,family,type:'birthday',date:next,note:k.interests?`Loves ${k.interests}`:'',location:'',visibility:'close-friends',attendees:[]});
+      S.events.push({id:Date.now()+10+i,author:name,child:k.name,family:kidsFamily,type:'birthday',date:next,note:k.interests?`Loves ${k.interests}`:'',location:'',visibility:'close-friends',attendees:[]});
     }
   });
 
