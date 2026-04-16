@@ -942,23 +942,22 @@ function renderGifts(){
       const allDone=joinedGift&&joinedCard;
       const contributorCount=g.contributors.length;
       const totalRaised=g.contributors.reduce((s,ct)=>s+(ct.amount||0),0);
-      const isBday2=d!==null&&d<=0;
-      const clickFn2=allDone?"openGiftDetail("+S.gifts.indexOf(g)+")":"openGiftPool("+g.id+")";
+      const isToday=d!==null&&d<=0;
+      const cardClick=allDone?'openGiftDetail('+S.gifts.indexOf(g)+')':'openGiftPool('+g.id+')';
 
-      h+=`<div class="card" style="cursor:pointer;" onclick="${clickFn2}">`
-        + '<div style="display:flex;align-items:center;gap:14px;">'
+      h+=`<div class="card" style="cursor:pointer;" onclick="${cardClick}">
         <div style="display:flex;align-items:center;gap:14px;">
           <div style="width:52px;height:52px;border-radius:50%;background:#F0E8FF;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎂</div>
           <div style="flex:1;min-width:0;">
-            <div style="font-size:16px;font-weight:600;color:#1a1a1a;">${g.firstName}'s birthday</div>
-            <div style="font-size:13px;color:#666;margin-top:2px;">${le?fmt(le.date):''} · ${d===0?'today!':d===1?'tomorrow':`in ${d} days`}</div>
+            <div style="font-size:16px;font-weight:600;color:#1a1a1a;">${g.firstName}'s birthday ${isToday?'🎉':''}</div>
+            <div style="font-size:13px;color:#666;margin-top:2px;">${le?fmt(le.date):''} · ${isToday?'<strong style="color:#8B5CC8">Today!</strong>':d===1?'tomorrow':`in ${d} days`}</div>
             <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
               ${allDone
                 ?`<span class="pill pill-teal">✓ You're in</span>`
                 :joinedGift&&!joinedCard
                   ?`<span class="pill pill-amber">✏️ Add your card message</span>`
                   :`<span class="pill pill-red">Join the group gift</span>`}
-              ${contributorCount>0?`<span class="pill pill-gray">${contributorCount} joining</span>`:''}
+              ${totalRaised>0?`<div style="font-size:13px;font-weight:700;color:#8B5CC8;margin-top:3px;">${totalRaised} raised · ${contributorCount} ${contributorCount===1?'person':'people'}</div>`:''}${isToday&&contributorCount>0?`<span class="pill" style="background:#F0E8FF;color:#8B5CC8;font-weight:600;">🎁 Ready to send!</span>`:''}
             </div>
           </div>
           <div style="font-size:20px;color:#ddd;">›</div>
@@ -2344,77 +2343,66 @@ const link=document.createElement('link');
 link.rel='manifest';link.href=murl;
 document.head.appendChild(link);
 
-// ── GIFT POOL DETAIL + REVEAL (overrides alert version) ──
+// ── GIFT DETAIL + REVEAL (overrides alert stub) ──
 function openGiftDetail(gi){
   var g=S.gifts[gi];if(!g)return;
   var le=S.events.find(function(e){return e.id===g.linkedEventId;});
   var total=g.contributors.reduce(function(s,ct){return s+(ct.amount||0);},0);
   var cnt=g.contributors.length;
   var d2=le?days(le.date):null;
-  var isToday=d2!==null&&d2<=0;
-  document.getElementById("gd-title").textContent=String.fromCodePoint(127873)+" "+g.firstName+"'s group gift";
+  var isToday2=d2!==null&&d2<=0;
+  document.getElementById("gd-title").textContent="🎁 "+g.firstName+"'s group gift";
   var h="";
-  h+='<div style="background:linear-gradient(135deg,#3D1A6E,#8B5CC8);border-radius:14px;padding:18px;text-align:center;margin-bottom:16px;">';
-  h+='<div style="font-size:36px;font-weight:700;color:#fff;">$'+total+'</div>';
-  h+='<div style="font-size:13px;color:#C9A8E8;margin-top:3px;">raised by '+cnt+' '+(cnt===1?"person":"people")+' '+String.fromCodePoint(128156)+'</div>';
-  if(d2!==null)h+='<div style="font-size:12px;color:#C9A8E8;margin-top:4px;">'+( isToday?String.fromCodePoint(127874)+" Birthday today!":d2===1?"1 day to go":d2+" days to go" )+'</div>';
-  h+='</div>';
+  h+='<div style="background:linear-gradient(135deg,#3D1A6E,#8B5CC8);border-radius:14px;padding:18px;text-align:center;margin-bottom:16px;">'
+    +'<div style="font-size:36px;font-weight:700;color:#fff;">$'+total+'</div>'
+    +'<div style="font-size:13px;color:#C9A8E8;margin-top:3px;">raised by '+cnt+' '+(cnt===1?"person":"people")+' 💜</div>'
+    +(d2!==null?'<div style="font-size:12px;color:#C9A8E8;margin-top:4px;">'+( isToday2?"🎂 Birthday today!":d2===1?"1 day to go":d2+" days to go")+'</div>':"")
+    +'</div>';
   if(cnt>0){
-    h+='<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Who's in</div>';
-    g.contributors.forEach(function(ct){
-      h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F5EEFF;">'+av(ct.name,34)+'<div style="flex:1;font-size:14px;font-weight:500;">'+ct.name+'</div><div style="font-size:14px;font-weight:700;color:#8B5CC8;">$'+(ct.amount||0)+'</div></div>';
-    });
+    h+='<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Who\'s in</div>';
+    g.contributors.forEach(function(ct){h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F5EEFF;">'+av(ct.name,34)+'<div style="flex:1;font-size:14px;font-weight:500;">'+ct.name+'</div><div style="font-size:14px;font-weight:700;color:#8B5CC8;">$'+(ct.amount||0)+'</div></div>';});
     h+='</div>';
   }
   if(g.card.messages.length>0){
     h+='<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Group card</div>';
-    g.card.messages.forEach(function(m){
-      h+='<div style="background:#FAF8FF;border-radius:12px;padding:12px 14px;margin-bottom:8px;border:1px solid #EDE0FF;"><div style="font-size:11px;font-weight:700;color:#8B5CC8;margin-bottom:5px;">from '+m.author+' '+String.fromCodePoint(128156)+'</div><div style="font-size:14px;color:#1a1a1a;line-height:1.55;">'+m.text+'</div>'+(m.img?'<img src="'+m.img+'" style="width:100%;border-radius:8px;margin-top:8px;max-height:120px;object-fit:cover;">':"")+"</div>";
-    });
+    g.card.messages.forEach(function(m){h+='<div style="background:#FAF8FF;border-radius:12px;padding:12px 14px;margin-bottom:8px;border:1px solid #EDE0FF;"><div style="font-size:11px;font-weight:700;color:#8B5CC8;margin-bottom:5px;">from '+m.author+' 💜</div><div style="font-size:14px;color:#1a1a1a;line-height:1.55;">'+m.text+'</div>'+(m.img?'<img src="'+m.img+'" style="width:100%;border-radius:8px;margin-top:8px;max-height:120px;object-fit:cover;">':"")+"</div>";});
     h+='</div>';
   }
-  h+='<div style="display:flex;flex-direction:column;gap:8px;padding-top:4px;">';
-  h+='<button class="btn btn-outline" onclick="showGiftReveal('+g.id+')">'+ String.fromCodePoint(128064)+' Preview what '+g.firstName+' sees</button>';
-  if(isToday&&cnt>0)h+='<button class="btn btn-primary" style="background:linear-gradient(135deg,#6B3FA0,#8B5CC8);" onclick="sendGiftReveal('+g.id+')">'+ String.fromCodePoint(127873)+' Send to '+g.firstName+'!</button>';
-  h+='</div>';
+  h+='<div style="display:flex;flex-direction:column;gap:8px;padding-top:4px;">'
+    +'<button class="btn btn-outline" onclick="showGiftReveal('+g.id+')">👀 Preview what '+g.firstName+' sees</button>'
+    +(isToday2&&cnt>0?'<button class="btn btn-primary" style="background:linear-gradient(135deg,#6B3FA0,#8B5CC8);" onclick="sendGiftReveal('+g.id+')">🎁 Send to '+g.firstName+'!</button>':'' )
+    +'</div>';
   document.getElementById("gd-content").innerHTML=h;
   openModal("gift-detail-modal");
 }
 
-function showGiftReveal(giftId){
-  var g=S.gifts.find(function(x){return x.id===giftId;});
-  if(!g)return;
+function showGiftReveal(gid){
+  var g=S.gifts.find(function(x){return x.id===gid;});if(!g)return;
   var total=g.contributors.reduce(function(s,ct){return s+(ct.amount||0);},0);
   var cnt=g.contributors.length;
-  var h='<div style="text-align:center;margin-bottom:20px;">'+
-    '<div style="font-size:52px;margin-bottom:10px;">'+String.fromCodePoint(127873)+'</div>'+
-    '<div style="font-size:22px;font-weight:700;color:#3D1A6E;line-height:1.2;">Your village got you<br>a birthday gift!</div>'+
-    '<div style="font-size:14px;color:#6B3FA0;margin-top:6px;">'+cnt+' '+(cnt===1?"person":"people")+' chipped in '+String.fromCodePoint(128156)+'</div></div>'+
-    '<div style="background:linear-gradient(135deg,#3D1A6E,#8B5CC8);border-radius:16px;padding:24px;text-align:center;margin-bottom:20px;">'+
-    '<div style="font-size:44px;font-weight:700;color:#fff;">$'+total+'</div>'+
-    '<div style="font-size:13px;color:#C9A8E8;margin-top:4px;">pooled with love</div></div>';
+  var h='<div style="text-align:center;margin-bottom:20px;"><div style="font-size:52px;margin-bottom:10px;">🎁</div>'
+    +'<div style="font-size:22px;font-weight:700;color:#3D1A6E;line-height:1.2;">Your village got you<br>a birthday gift!</div>'
+    +'<div style="font-size:14px;color:#6B3FA0;margin-top:6px;">'+cnt+' '+(cnt===1?'person':'people')+' chipped in 💜</div></div>'
+    +'<div style="background:linear-gradient(135deg,#3D1A6E,#8B5CC8);border-radius:16px;padding:24px;text-align:center;margin-bottom:20px;">'
+    +'<div style="font-size:44px;font-weight:700;color:#fff;">$'+total+'</div>'
+    +'<div style="font-size:13px;color:#C9A8E8;margin-top:4px;">pooled with love</div></div>';
   if(g.card.messages.length>0){
-    h+='<div style="font-size:14px;font-weight:600;color:#3D1A6E;margin-bottom:12px;text-align:center;">Messages from your village '+String.fromCodePoint(128140)+'</div>';
-    g.card.messages.forEach(function(m){
-      h+='<div style="background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;border:1px solid #EDE0FF;box-shadow:0 2px 12px rgba(139,92,200,.1);">'+
-        '<div style="font-size:12px;font-weight:700;color:#8B5CC8;margin-bottom:6px;">from '+m.author+' '+String.fromCodePoint(128156)+'</div>'+
-        '<div style="font-size:14px;color:#1a1a1a;line-height:1.6;">'+m.text+'</div>'+(m.img?'<img src="'+m.img+'" style="width:100%;border-radius:10px;margin-top:10px;max-height:150px;object-fit:cover;">':"")+'</div>';
-    });
+    h+='<div style="font-size:14px;font-weight:600;color:#3D1A6E;margin-bottom:12px;text-align:center;">Messages from your village 💌</div>';
+    g.card.messages.forEach(function(m){h+='<div style="background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;border:1px solid #EDE0FF;box-shadow:0 2px 12px rgba(139,92,200,.1);"><div style="font-size:12px;font-weight:700;color:#8B5CC8;margin-bottom:6px;">from '+m.author+' 💜</div><div style="font-size:14px;color:#1a1a1a;line-height:1.6;">'+m.text+'</div>'+(m.img?'<img src="'+m.img+'" style="width:100%;border-radius:10px;margin-top:10px;max-height:150px;object-fit:cover;">':'')+'</div>';});
   }
   h+='<div style="margin-top:16px;padding:12px;background:#F0E8FF;border-radius:10px;text-align:center;font-size:12px;color:#6B3FA0;font-style:italic;">Preview — tap Send to share with '+g.firstName+'</div>';
   document.getElementById("gr-content").innerHTML=h;
   openModal("gift-reveal-modal");
 }
 
-function sendGiftReveal(giftId){
-  var g=S.gifts.find(function(x){return x.id===giftId;});
-  if(!g)return;
+function sendGiftReveal(gid){
+  var g=S.gifts.find(function(x){return x.id===gid;});if(!g)return;
   var total=g.contributors.reduce(function(s,ct){return s+(ct.amount||0);},0);
   var firstNames=g.contributors.map(function(ct){return ct.name.split(" ")[0];}).join(", ");
-  var cardBit=g.card.messages.map(function(m){return m.author+": \""+m.text+"\"";}).join("\n");
-  var msg=String.fromCodePoint(127873)+" Happy birthday "+g.firstName+"!\n\nYour village pooled $"+total+" as a gift\u2014from "+firstNames+"!"+(cardBit?"\n\n"+cardBit:"")+"\n\nWith love from your Loopd village "+String.fromCodePoint(128156);
+  var cardBit=g.card.messages.map(function(m){return m.author+': "'+m.text+'"';}).join("\n");
+  var msg="🎁 Happy birthday "+g.firstName+"!\n\nYour village pooled $"+total+" as a gift—from "+firstNames+"!"+(cardBit?"\n\n"+cardBit:"")+"\n\nWith love from your Loopd village 💜";
   if(navigator.share){navigator.share({title:g.firstName+"'s Birthday Gift",text:msg}).catch(function(){});}
-  else if(navigator.clipboard){navigator.clipboard.writeText(msg).then(function(){alert("Copied! Send to "+g.firstName+" "+String.fromCodePoint(127873));});}
+  else if(navigator.clipboard){navigator.clipboard.writeText(msg).then(function(){alert("Copied! Send to "+g.firstName+" 🎁");});}
   else{prompt("Copy and send to "+g.firstName+":",msg);}
 }
 </script>
